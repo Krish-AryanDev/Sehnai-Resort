@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence, type Variants } from "motion/react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { SmartImage } from "@/components/SmartImage";
 
 const SLIDE_DURATION = 3500;
 
@@ -160,12 +161,16 @@ export function HeroSlider() {
           initial="enter"
           animate="center"
           exit="exit"
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: `url(${slide.image})`,
-            backgroundPosition: slide.position,
-          }}
-        />
+          className="absolute inset-0"
+        >
+          <SmartImage
+            src={slide.image}
+            alt={slide.tag}
+            priority={current === 0}
+            containerClassName="w-full h-full"
+            objectPosition={slide.position}
+          />
+        </motion.div>
       </AnimatePresence>
 
       {/* Gradient overlays */}

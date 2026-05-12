@@ -1,10 +1,10 @@
 "use client";
 
-import { motion } from "motion/react";
 import { Wifi, Car, Coffee, Shield, Wind, ArrowRight, Star } from "lucide-react";
 import { FadeIn } from "@/components/FadeIn";
 import { PageHero } from "@/components/PageHero";
 import { ContactCTA } from "@/components/ContactCTA";
+import { SmartImage } from "@/components/SmartImage";
 
 const rooms = [
   {
@@ -124,12 +124,11 @@ export default function HotelPage() {
                   }}
                 >
                   <div className="relative overflow-hidden" style={{ aspectRatio: "4/3" }}>
-                    <motion.img
+                    <SmartImage
                       src={room.image}
                       alt={room.type}
-                      className="w-full h-full object-cover"
-                      whileHover={{ scale: 1.05 }}
-                      transition={{ duration: 0.5 }}
+                      hoverScale={1.05}
+                      containerClassName="w-full h-full"
                     />
                     {room.highlight && (
                       <div
@@ -274,12 +273,12 @@ export default function HotelPage() {
 
       {/* Pool/Exterior Banner */}
       <section className="relative overflow-hidden" style={{ height: "360px" }}>
-        <img
+        <SmartImage
           src="https://images.unsplash.com/photo-1561811358-21aef14f0551?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob3RlbCUyMHN3aW1taW5nJTIwcG9vbCUyMHJlc29ydCUyMGx1eHVyeSUyMG91dGRvb3J8ZW58MXx8fHwxNzc4NTIxNzA4fDA&ixlib=rb-4.1.0&q=80&w=1080"
           alt="Hotel exterior"
-          className="w-full h-full object-cover"
+          containerClassName="absolute inset-0"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/65 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/65 to-transparent pointer-events-none" />
         <div className="absolute inset-0 flex items-center">
           <div className="max-w-7xl mx-auto px-6 md:px-10 w-full">
             <FadeIn>

@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { ArrowRight, Star, Users, UtensilsCrossed, BedDouble } from "lucide-react";
 import { HeroSlider } from "@/components/HeroSlider";
 import { FadeIn } from "@/components/FadeIn";
+import { SmartImage } from "@/components/SmartImage";
 
 const services = [
   {
@@ -183,12 +184,11 @@ export default function HomePage() {
                     style={{ aspectRatio: "4/3", cursor: "pointer" }}
                     onClick={() => router.push(service.path)}
                   >
-                    <motion.img
+                    <SmartImage
                       src={service.image}
                       alt={service.tag}
-                      className="w-full h-full object-cover"
-                      whileHover={{ scale: 1.04 }}
-                      transition={{ duration: 0.6, ease: "easeOut" }}
+                      hoverScale={1.04}
+                      containerClassName="w-full h-full"
                     />
                     {/* Gold corner accent */}
                     <div

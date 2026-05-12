@@ -65,6 +65,12 @@ body {
   box-sizing: border-box;
 }
 
+/* Shimmer skeleton used by <SmartImage /> while images decode */
+@keyframes smart-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
 /* Hide native cursor on desktop — replaced with <CustomCursor />.
    Touch / coarse-pointer devices keep their native cursor. */
 @media (hover: hover) and (pointer: fine) {

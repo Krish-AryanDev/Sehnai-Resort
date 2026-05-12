@@ -4,6 +4,7 @@ import { Clock, Users, Leaf, Wine, ArrowRight, Phone } from "lucide-react";
 import { FadeIn } from "@/components/FadeIn";
 import { PageHero } from "@/components/PageHero";
 import { ContactCTA } from "@/components/ContactCTA";
+import { SmartImage } from "@/components/SmartImage";
 
 const menuCategories = [
   {
@@ -105,14 +106,14 @@ export default function RestaurantPage() {
 
             <FadeIn>
               <div className="relative">
-                <img
+                <SmartImage
                   src="https://images.unsplash.com/photo-1750943024048-a4c9912b1425?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnb3VybWV0JTIwZm9vZCUyMHBsYXRpbmclMjBlbGVnYW50JTIwZGlzaHxlbnwxfHx8fDE3Nzg1MjE3MDR8MA&ixlib=rb-4.1.0&q=80&w=1080"
                   alt="Fine dining"
-                  className="w-full object-cover"
-                  style={{ aspectRatio: "4/3" }}
+                  containerClassName="w-full"
+                  containerStyle={{ aspectRatio: "4/3" }}
                 />
-                <div className="absolute top-0 left-0 w-10 h-10" style={{ borderTop: "2px solid #C9A84C", borderLeft: "2px solid #C9A84C" }} />
-                <div className="absolute bottom-0 right-0 w-10 h-10" style={{ borderBottom: "2px solid #C9A84C", borderRight: "2px solid #C9A84C" }} />
+                <div className="absolute top-0 left-0 w-10 h-10 pointer-events-none" style={{ borderTop: "2px solid #C9A84C", borderLeft: "2px solid #C9A84C" }} />
+                <div className="absolute bottom-0 right-0 w-10 h-10 pointer-events-none" style={{ borderBottom: "2px solid #C9A84C", borderRight: "2px solid #C9A84C" }} />
               </div>
             </FadeIn>
           </div>
@@ -237,12 +238,12 @@ export default function RestaurantPage() {
 
       {/* Bar / Ambiance Full-Width Image */}
       <section className="relative overflow-hidden" style={{ height: "380px" }}>
-        <img
+        <SmartImage
           src="https://images.unsplash.com/photo-1777791374900-fd17067702fb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZXN0YXVyYW50JTIwYmFyJTIwY29ja3RhaWxzJTIwYW1iaWFuY2UlMjBuaWdodHxlbnwxfHx8fDE3Nzg1MjE3MDd8MA&ixlib=rb-4.1.0&q=80&w=1080"
           alt="Restaurant bar"
-          className="w-full h-full object-cover"
+          containerClassName="absolute inset-0"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent pointer-events-none" />
         <div className="absolute inset-0 flex items-center">
           <div className="max-w-7xl mx-auto px-6 md:px-10 w-full">
             <FadeIn>

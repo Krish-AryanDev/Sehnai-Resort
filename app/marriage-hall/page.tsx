@@ -4,6 +4,7 @@ import { Sparkles, Music, Camera, ChefHat, Car, Clock, ArrowRight, Phone } from 
 import { FadeIn } from "@/components/FadeIn";
 import { PageHero } from "@/components/PageHero";
 import { ContactCTA } from "@/components/ContactCTA";
+import { SmartImage } from "@/components/SmartImage";
 
 const features = [
   { icon: Sparkles, title: "Grand Ballroom", desc: "Opulent interiors with crystal chandeliers and marble flooring for the most regal ambiance." },
@@ -78,14 +79,14 @@ export default function MarriageHallPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <FadeIn>
               <div className="relative">
-                <img
+                <SmartImage
                   src="https://images.unsplash.com/photo-1762216444919-043cf813e4de?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxvdXRkb29yJTIwd2VkZGluZyUyMHZlbnVlJTIwcmVjZXB0aW9uJTIwZ2FyZGVufGVufDF8fHx8MTc3ODUyMTcwN3ww&ixlib=rb-4.1.0&q=80&w=1080"
                   alt="Wedding venue"
-                  className="w-full object-cover"
-                  style={{ aspectRatio: "4/3" }}
+                  containerClassName="w-full"
+                  containerStyle={{ aspectRatio: "4/3" }}
                 />
-                <div className="absolute top-0 left-0 w-10 h-10" style={{ borderTop: "2px solid #C9A84C", borderLeft: "2px solid #C9A84C" }} />
-                <div className="absolute bottom-0 right-0 w-10 h-10" style={{ borderBottom: "2px solid #C9A84C", borderRight: "2px solid #C9A84C" }} />
+                <div className="absolute top-0 left-0 w-10 h-10 pointer-events-none" style={{ borderTop: "2px solid #C9A84C", borderLeft: "2px solid #C9A84C" }} />
+                <div className="absolute bottom-0 right-0 w-10 h-10 pointer-events-none" style={{ borderBottom: "2px solid #C9A84C", borderRight: "2px solid #C9A84C" }} />
                 <div
                   className="absolute -bottom-5 -right-5 w-28 h-28 flex flex-col items-center justify-center text-center"
                   style={{ backgroundColor: "#C9A84C" }}
