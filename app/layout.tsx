@@ -5,6 +5,7 @@ import { Footer } from "@/components/Footer";
 import { CustomCursor } from "@/components/CustomCursor";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
+import { IntroScreen } from "@/components/IntroScreen";
 
 export const metadata: Metadata = {
   title: "Sehnai Resort — Marriage Hall, Restaurant & Hotel",
@@ -28,6 +29,7 @@ export default function RootLayout({
         </div>
         <WhatsAppButton />
         <CustomCursor />
+        <IntroScreen />
       </body>
     </html>
   );
