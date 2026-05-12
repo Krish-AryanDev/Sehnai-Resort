@@ -2,6 +2,28 @@
 
 @import "tailwindcss";
 
+/* Lenis smooth scroll — required when html/body are not the scroll container */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
 .font-playfair {
   font-family: 'Playfair Display', Georgia, serif;
 }
@@ -41,4 +63,26 @@ body {
 
 * {
   box-sizing: border-box;
+}
+
+/* Hide native cursor on desktop — replaced with <CustomCursor />.
+   Touch / coarse-pointer devices keep their native cursor. */
+@media (hover: hover) and (pointer: fine) {
+  html,
+  body,
+  a,
+  button,
+  [role="button"],
+  label,
+  img,
+  [data-cursor-hover] {
+    cursor: none;
+  }
+
+  /* Keep a usable cursor inside text fields */
+  input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type="radio"]),
+  textarea,
+  [contenteditable="true"] {
+    cursor: text;
+  }
 }
