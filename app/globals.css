@@ -71,6 +71,13 @@ body {
   100% { background-position: 200% 0; }
 }
 
+/* Outward pulse for the floating WhatsApp button */
+@keyframes wa-ping {
+  0%   { transform: scale(1);   opacity: 0.55; }
+  75%  { transform: scale(1.7); opacity: 0;    }
+  100% { transform: scale(1.7); opacity: 0;    }
+}
+
 /* Hide native cursor on desktop — replaced with <CustomCursor />.
    Touch / coarse-pointer devices keep their native cursor. */
 @media (hover: hover) and (pointer: fine) {

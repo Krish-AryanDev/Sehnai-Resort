@@ -6,6 +6,7 @@ import { ArrowRight, Star, Users, UtensilsCrossed, BedDouble } from "lucide-reac
 import { HeroSlider } from "@/components/HeroSlider";
 import { FadeIn } from "@/components/FadeIn";
 import { SmartImage } from "@/components/SmartImage";
+import { siteLinks } from "@/lib/site-config";
 
 const services = [
   {
@@ -382,7 +383,7 @@ export default function HomePage() {
           <FadeIn delay={0.3}>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <a
-                href="tel:+0000000000"
+                href={siteLinks.tel}
                 className="flex items-center gap-3 bg-[#C9A84C] text-black hover:bg-[#dfc068] transition-all duration-300 font-inter"
                 style={{
                   fontFamily: "'Inter', sans-serif",
@@ -396,7 +397,7 @@ export default function HomePage() {
                 Call Us Now
               </a>
               <a
-                href="mailto:info@sehnairesort.com"
+                href={siteLinks.mailto}
                 className="flex items-center gap-3 border border-white/20 text-white/70 hover:border-[#C9A84C] hover:text-[#C9A84C] transition-all duration-300 font-inter"
                 style={{
                   fontFamily: "'Inter', sans-serif",

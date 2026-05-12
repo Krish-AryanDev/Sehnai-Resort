@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { Menu, X, Phone } from "lucide-react";
+import { siteLinks } from "@/lib/site-config";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -114,7 +115,7 @@ export function Navbar() {
         {/* Right side: CTA + Mobile Toggle */}
         <div className="flex items-center gap-4">
           <a
-            href="tel:+0000000000"
+            href={siteLinks.tel}
             className="hidden md:flex items-center gap-2 font-inter transition-all duration-300 border"
             style={{
               fontFamily: "'Inter', sans-serif",
@@ -219,7 +220,7 @@ export function Navbar() {
                 className="pt-4"
               >
                 <a
-                  href="tel:+0000000000"
+                  href={siteLinks.tel}
                   className="flex items-center gap-2 text-[#C9A84C] font-inter"
                   style={{
                     fontFamily: "'Inter', sans-serif",

@@ -5,6 +5,7 @@ import { FadeIn } from "@/components/FadeIn";
 import { PageHero } from "@/components/PageHero";
 import { ContactCTA } from "@/components/ContactCTA";
 import { SmartImage } from "@/components/SmartImage";
+import { siteLinks } from "@/lib/site-config";
 
 const menuCategories = [
   {
@@ -87,7 +88,7 @@ export default function RestaurantPage() {
                   Whether you're joining us for a leisurely lunch, a romantic dinner, or a private celebration, our team is dedicated to ensuring every visit exceeds your expectations.
                 </p>
                 <a
-                  href="tel:+0000000000"
+                  href={siteLinks.tel}
                   className="flex items-center gap-3 bg-[#C9A84C] text-black hover:bg-[#dfc068] transition-all duration-300 font-inter w-fit"
                   style={{
                     fontFamily: "'Inter', sans-serif",

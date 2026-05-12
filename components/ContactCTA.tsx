@@ -1,5 +1,6 @@
 import { Phone } from "lucide-react";
 import { FadeIn } from "./FadeIn";
+import { siteLinks } from "@/lib/site-config";
 
 interface ContactCTAProps {
   title: string;
@@ -13,7 +14,7 @@ export function ContactCTA({
   title,
   description,
   primaryLabel,
-  primaryHref = "tel:+0000000000",
+  primaryHref = siteLinks.tel,
   secondaryLabel,
 }: ContactCTAProps) {
   return (

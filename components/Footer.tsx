@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { Instagram, Facebook, Twitter } from "./SocialIcons";
+import { siteConfig } from "@/lib/site-config";
 
 const hallLinks = [
   "Grand Ballroom",
@@ -25,12 +26,16 @@ const hotelLinks = [
 ];
 
 const contactInfo = [
-  { icon: Phone, text: "+00 000 0000000" },
-  { icon: Mail, text: "info@sehnairesort.com" },
-  { icon: MapPin, text: "123 Grand Avenue, City" },
+  { icon: Phone, text: siteConfig.phoneDisplay },
+  { icon: Mail, text: siteConfig.email },
+  { icon: MapPin, text: siteConfig.address },
 ];
 
-const socials = [Instagram, Facebook, Twitter];
+const socials: { Icon: typeof Instagram; href: string; label: string }[] = [
+  { Icon: Instagram, href: siteConfig.social.instagram, label: "Instagram" },
+  { Icon: Facebook, href: siteConfig.social.facebook, label: "Facebook" },
+  { Icon: Twitter, href: siteConfig.social.twitter, label: "Twitter" },
+];
 const bottomLinks = ["Privacy Policy", "Terms of Service", "Contact Us"];
 
 function FooterColumn({
@@ -155,10 +160,13 @@ export function Footer() {
 
             {/* Social icons */}
             <div className="flex items-center gap-3">
-              {socials.map((Icon, i) => (
+              {socials.map(({ Icon, href, label }) => (
                 <a
-                  key={i}
-                  href="#"
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
                   className="w-8 h-8 border border-white/15 flex items-center justify-center text-white/40 hover:border-[#C9A84C] hover:text-[#C9A84C] transition-all duration-300"
                 >
                   <Icon size={14} />

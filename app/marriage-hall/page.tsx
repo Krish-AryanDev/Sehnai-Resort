@@ -5,6 +5,7 @@ import { FadeIn } from "@/components/FadeIn";
 import { PageHero } from "@/components/PageHero";
 import { ContactCTA } from "@/components/ContactCTA";
 import { SmartImage } from "@/components/SmartImage";
+import { siteLinks } from "@/lib/site-config";
 
 const features = [
   { icon: Sparkles, title: "Grand Ballroom", desc: "Opulent interiors with crystal chandeliers and marble flooring for the most regal ambiance." },
@@ -143,7 +144,7 @@ export default function MarriageHallPage() {
                   From the first consultation to the last dance, our team of professional event planners is committed to bringing your vision to life with precision and care.
                 </p>
                 <a
-                  href="tel:+0000000000"
+                  href={siteLinks.tel}
                   className="flex items-center gap-3 bg-[#C9A84C] text-black hover:bg-[#dfc068] transition-all duration-300 font-inter w-fit"
                   style={{
                     fontFamily: "'Inter', sans-serif",
