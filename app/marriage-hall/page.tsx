@@ -19,7 +19,7 @@ const packages = [
     name: "Silver",
     tagline: "Classic Elegance",
     capacity: "Up to 200 guests",
-    price: "Starting from $2,500",
+    price: "Starting from ₹50,000",
     items: [
       "Main Hall Rental (8 hours)",
       "Basic Floral Décor",
@@ -33,7 +33,7 @@ const packages = [
     name: "Gold",
     tagline: "The Signature Experience",
     capacity: "Up to 400 guests",
-    price: "Starting from $5,000",
+    price: "Starting from ₹1,00,000",
     items: [
       "Grand Ballroom (12 hours)",
       "Premium Floral Arrangements",
@@ -48,7 +48,7 @@ const packages = [
     name: "Royal",
     tagline: "The Ultimate Celebration",
     capacity: "Up to 600 guests",
-    price: "Starting from $9,500",
+    price: "Starting from ₹2,00,000",
     items: [
       "Full Venue Exclusivity",
       "Luxury Décor Package",
