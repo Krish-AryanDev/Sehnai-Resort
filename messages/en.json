@@ -1,0 +1,145 @@
+{
+  "nav": {
+    "home": "Home",
+    "marriageHall": "Marriage Hall",
+    "restaurant": "Restaurant",
+    "hotel": "Hotel",
+    "bookNow": "Book Now",
+    "callToBook": "Call to Book Now"
+  },
+  "languageToggle": {
+    "switchToHindi": "हिन्दी",
+    "switchToEnglish": "EN",
+    "ariaLabel": "Change language"
+  },
+  "hero": {
+    "slides": {
+      "marriageHall": {
+        "tag": "Marriage Hall",
+        "heading": "Where Love\nStories Begin",
+        "subtext": "Transform your special day into an unforgettable celebration in our magnificent halls, accommodating up to 600 guests.",
+        "cta": "Explore Our Venue"
+      },
+      "restaurant": {
+        "tag": "Fine Dining",
+        "heading": "A Culinary Journey\nLike No Other",
+        "subtext": "Savor exquisite flavors crafted with passion and served with timeless elegance. A complete experience for all your senses.",
+        "cta": "Reserve a Table"
+      },
+      "hotel": {
+        "tag": "Luxury Hotel",
+        "heading": "Your Home\nAway From Home",
+        "subtext": "Experience unparalleled comfort and elegance across our 12 premium rooms. Every stay is a cherished memory.",
+        "cta": "Book a Stay"
+      }
+    },
+    "swipeHint": "SWIPE TO EXPLORE"
+  },
+  "home": {
+    "welcome": {
+      "eyebrow": "Welcome to Shehnai Resort",
+      "heading": "Three Iconic Experiences,",
+      "headingAccent": "One Legendary Address",
+      "subtext": "From the grandest wedding celebrations to intimate dining experiences and luxurious overnight stays — Shehnai Resort is built to be the most memorable address in your life's most important moments."
+    },
+    "stats": {
+      "yearsLabel": "Years of Excellence",
+      "celebrationsLabel": "Happy Celebrations",
+      "menuLabel": "Menu Items",
+      "roomsLabel": "Premium Rooms"
+    },
+    "services": {
+      "marriageHall": {
+        "tag": "01 — Marriage Hall",
+        "title": "Celebrate Love\nin Grand Style",
+        "description": "Our magnificent marriage hall is designed to be the perfect backdrop for your most cherished moments. With elegant décor, world-class catering, and a dedicated events team, we ensure your wedding is nothing short of extraordinary.",
+        "features": ["Up to 600 Guests", "In-house Catering", "Full AV Setup", "Dedicated Coordinator"],
+        "cta": "Explore the Hall"
+      },
+      "restaurant": {
+        "tag": "02 — Restaurant",
+        "title": "Flavors That Tell\nA Story",
+        "description": "Step into a world of culinary artistry. Our restaurant blends rich tradition with modern gastronomy — every dish is a masterpiece, every meal an occasion. Whether an intimate dinner or a large gathering, we cater to every palate.",
+        "features": ["Authentic Indian Cuisine", "Family-Friendly Menu", "Scenic View", "Room Service Available"],
+        "cta": "View the Menu"
+      },
+      "hotel": {
+        "tag": "03 — Hotel",
+        "title": "Rest in\nAbsolute Luxury",
+        "description": "Our boutique hotel offers 12 premium rooms, each thoughtfully designed with comfort and elegance in mind. Enjoy world-class amenities, attentive service, and a peaceful sanctuary — just moments from everything you need.",
+        "features": ["12 Premium Rooms", "24/7 Room Service", "Free Wi-Fi & Parking", "Daily Housekeeping"],
+        "cta": "See Our Rooms"
+      }
+    },
+    "ctaBanner": {
+      "eyebrow": "Begin Your Journey",
+      "heading": "Ready to Create Your",
+      "headingAccent": "Perfect Experience?",
+      "subtext": "Contact our team today and let us craft a bespoke experience tailored to your vision, your story, and your occasion.",
+      "callNow": "Call Us Now",
+      "enquiry": "Send an Enquiry"
+    }
+  },
+  "marriageHall": {
+    "hero": {
+      "eyebrow": "Shehnai Resort",
+      "title": "Marriage Hall",
+      "description": "A venue as grand as your love story. Where every detail is perfected and every moment becomes a memory."
+    },
+    "cta": {
+      "title": "Let's Plan Your Perfect Day",
+      "description": "Contact our wedding team today and start planning the celebration of a lifetime.",
+      "primary": "Contact Us Now"
+    }
+  },
+  "restaurant": {
+    "hero": {
+      "eyebrow": "Fine Dining",
+      "title": "The Restaurant",
+      "description": "A culinary destination where every dish tells a story and every evening becomes unforgettable."
+    },
+    "cta": {
+      "title": "Reserve Your Table Tonight",
+      "description": "Call us to reserve, or walk in during our open hours. We look forward to serving you.",
+      "primary": "Reserve Now"
+    }
+  },
+  "hotel": {
+    "hero": {
+      "eyebrow": "Boutique Hotel",
+      "title": "The Hotel",
+      "description": "12 premium rooms — each a world of comfort, elegance, and personalized service."
+    },
+    "cta": {
+      "title": "Book Your Stay Today",
+      "description": "Call us directly or send an enquiry and our reservations team will assist you promptly.",
+      "primary": "Book Now",
+      "secondary": "Check Availability"
+    }
+  },
+  "footer": {
+    "tagline": "Three exceptional experiences under one roof — a magnificent marriage hall, a fine dining restaurant, and a boutique luxury hotel.",
+    "columns": {
+      "marriageHall": "Marriage Hall",
+      "restaurant": "Restaurant",
+      "hotel": "Hotel"
+    },
+    "bottom": {
+      "rights": "All rights reserved.",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "contact": "Contact Us"
+    }
+  },
+  "whatsapp": {
+    "tooltip": "Chat on WhatsApp",
+    "tooltipPrefix": "Chat",
+    "ariaLabel": "Chat with Shehnai Resort on WhatsApp",
+    "messages": {
+      "default": "Hello, I'm interested in Shehnai Resort. Could you share more details?",
+      "marriageHall": "Hello, I'm interested in booking the marriage hall at Shehnai Resort. Could you share availability and packages?",
+      "restaurant": "Hello, I'd like to make a reservation at Shehnai Resort's restaurant. Could you help?",
+      "hotel": "Hello, I'd like to enquire about rooms at Shehnai Resort. Could you share availability and rates?"
+    }
+  }
+}

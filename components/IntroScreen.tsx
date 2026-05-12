@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 
-const SESSION_KEY = "sehnai_intro_seen";
+const SESSION_KEY = "shehnai_intro_seen";
 const VISIBLE_DURATION = 1300; // ms before exit animation begins
 const EASE_OUT: [number, number, number, number] = [0.25, 0.46, 0.45, 0.94];
 
@@ -29,14 +29,19 @@ export function IntroScreen() {
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
+    const releaseLock = () => {
+      document.body.style.overflow = previousOverflow;
+    };
+
     const timer = setTimeout(() => {
       sessionStorage.setItem(SESSION_KEY, "1");
       setShow(false);
+      releaseLock();
     }, VISIBLE_DURATION);
 
     return () => {
       clearTimeout(timer);
-      document.body.style.overflow = previousOverflow;
+      releaseLock();
     };
   }, []);
 
@@ -96,7 +101,7 @@ export function IntroScreen() {
                 paddingLeft: "0.18em",
               }}
             >
-              SEHNAI RESORT
+              SHEHNAI RESORT
             </motion.span>
 
             {/* Drawing gold line */}

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Single source of truth for client-facing contact details.
  * Values come from NEXT_PUBLIC_* env vars; safe placeholders are used
  * during local development if a variable is missing.
@@ -8,7 +8,7 @@
  */
 
 export const siteConfig = {
-  brand: "Sehnai Resort",
+  brand: "Shehnai Resort",
 
   // Raw phone — used for tel: links. Must include country code and no spaces.
   phone: process.env.NEXT_PUBLIC_PHONE_NUMBER ?? "+0000000000",
@@ -19,7 +19,7 @@ export const siteConfig = {
   // WhatsApp number — country code first, no '+', spaces, or dashes.
   whatsapp: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "91XXXXXXXXXX",
 
-  email: process.env.NEXT_PUBLIC_EMAIL ?? "info@sehnairesort.com",
+  email: process.env.NEXT_PUBLIC_EMAIL ?? "info@shehnairesort.com",
 
   address:
     process.env.NEXT_PUBLIC_ADDRESS ?? "123 Grand Avenue, City",

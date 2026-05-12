@@ -1,33 +1,32 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
+import { useTranslations } from "next-intl";
+import { usePathname } from "@/i18n/navigation";
 import { siteLinks } from "@/lib/site-config";
 
-const MESSAGES: Record<string, string> = {
-  "/marriage-hall":
-    "Hello, I'm interested in booking the marriage hall at Sehnai Resort. Could you share availability and packages?",
-  "/restaurant":
-    "Hello, I'd like to make a reservation at Sehnai Resort's restaurant. Could you help?",
-  "/hotel":
-    "Hello, I'd like to enquire about rooms at Sehnai Resort. Could you share availability and rates?",
-};
+type MessageKey = "default" | "marriageHall" | "restaurant" | "hotel";
 
-const DEFAULT_MESSAGE =
-  "Hello, I'm interested in Sehnai Resort. Could you share more details?";
+const PATH_TO_KEY: Record<string, MessageKey> = {
+  "/marriage-hall": "marriageHall",
+  "/restaurant": "restaurant",
+  "/hotel": "hotel",
+};
 
 export function WhatsAppButton() {
   const pathname = usePathname();
+  const t = useTranslations("whatsapp");
   const [mounted, setMounted] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 1200);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setMounted(true), 1200);
+    return () => clearTimeout(timer);
   }, []);
 
-  const message = MESSAGES[pathname] ?? DEFAULT_MESSAGE;
+  const messageKey: MessageKey = PATH_TO_KEY[pathname] ?? "default";
+  const message = t(`messages.${messageKey}`);
   const href = siteLinks.whatsapp(message);
 
   return (
@@ -66,7 +65,8 @@ export function WhatsAppButton() {
                 WebkitBackdropFilter: "blur(10px)",
               }}
             >
-              <span style={{ color: "#C9A84C" }}>Chat</span> on WhatsApp
+              <span style={{ color: "#C9A84C" }}>{t("tooltipPrefix")}</span>{" "}
+              {t("tooltip").replace(t("tooltipPrefix"), "").trim()}
             </div>
           </motion.div>
         )}
@@ -76,7 +76,7 @@ export function WhatsAppButton() {
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Chat with Sehnai Resort on WhatsApp"
+        aria-label={t("ariaLabel")}
         data-cursor-hover
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
@@ -86,13 +86,11 @@ export function WhatsAppButton() {
         style={{
           width: 60,
           height: 60,
-          background:
-            "linear-gradient(135deg, #25D366 0%, #1DA851 100%)",
+          background: "linear-gradient(135deg, #25D366 0%, #1DA851 100%)",
           boxShadow:
             "0 10px 30px rgba(37, 211, 102, 0.32), 0 4px 14px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255,255,255,0.18)",
         }}
       >
-        {/* Soft ping ring */}
         <span
           aria-hidden
           className="absolute inset-0 rounded-full"
@@ -102,16 +100,12 @@ export function WhatsAppButton() {
           }}
         />
 
-        {/* Hairline gold accent ring */}
         <span
           aria-hidden
           className="absolute inset-0 rounded-full pointer-events-none"
-          style={{
-            border: "1px solid rgba(201, 168, 76, 0.35)",
-          }}
+          style={{ border: "1px solid rgba(201, 168, 76, 0.35)" }}
         />
 
-        {/* WhatsApp glyph */}
         <svg
           viewBox="0 0 32 32"
           width={28}
@@ -120,7 +114,7 @@ export function WhatsAppButton() {
           aria-hidden
           style={{ position: "relative", display: "block" }}
         >
-          <path d="M16.003 3C8.82 3 3 8.82 3 16.003c0 2.293.6 4.534 1.745 6.51L3 29l6.66-1.715a13.005 13.005 0 0 0 6.343 1.618h.005C23.183 28.903 29 23.083 29 15.9c0-3.464-1.35-6.72-3.8-9.17A12.94 12.94 0 0 0 16.003 3Zm0 23.85h-.004a10.834 10.834 0 0 1-5.518-1.51l-.396-.235-3.952 1.018 1.054-3.847-.258-.398a10.78 10.78 0 0 1-1.654-5.875c.002-5.97 4.864-10.83 10.84-10.83a10.77 10.77 0 0 1 7.66 3.176 10.737 10.737 0 0 1 3.17 7.66c-.002 5.97-4.864 10.84-10.84 10.84Zm5.94-8.11c-.325-.163-1.927-.952-2.226-1.06-.299-.11-.516-.163-.733.163-.217.326-.84 1.06-1.029 1.277-.19.217-.38.245-.706.082-.325-.163-1.375-.507-2.62-1.617-.968-.864-1.622-1.93-1.812-2.256-.19-.326-.02-.502.143-.665.147-.146.326-.38.49-.57.163-.19.217-.326.326-.543.108-.217.054-.408-.027-.57-.082-.163-.733-1.767-1.005-2.42-.264-.634-.532-.548-.733-.558l-.624-.012a1.2 1.2 0 0 0-.87.408c-.299.326-1.14 1.114-1.14 2.717 0 1.604 1.167 3.153 1.33 3.37.163.217 2.298 3.51 5.567 4.92.779.337 1.387.538 1.86.69.781.249 1.493.213 2.055.13.627-.094 1.927-.788 2.198-1.55.272-.762.272-1.414.19-1.55-.082-.135-.299-.217-.624-.38Z" />
+          <path d="M16.003 3C8.82 3 3 8.82 3 16.003c0 2.293.6 4.534 1.745 6.51L3 29l6.66-1.715a13.005 13.005 0 0 0 6.343 1.618h.005C23.183 28.903 29 23.083 29 15.9c0-3.464-1.35-6.72-3.8-9.17A12.94 12.94 0 0 0 16.003 3Zm0 23.85h-.004a10.834 10.834 0 0 1-5.518-1.51l-.396-.235-3.952 1.018 1.054-3.847-.258-.398a10.78 10.78 0 0 1-1.654-5.875c.002-5.97 4.864-10.83 10.84-10.83a10.77 10.77 0 0 1 7.66 3.176 10.737 10.737 0 0 1 3.17 7.66c-.002 5.97-4.864 10.84-10.84 10.84Zm5.94-8.11c-.325-.163-1.927-.952-2.226-1.06-.299-.11-.516-.163-.733.163-.217.326-.84 1.06-1.029 1.277-.19.17-.29.18-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.1-.22-.16-.47-.28z" />
         </svg>
       </a>
     </motion.div>

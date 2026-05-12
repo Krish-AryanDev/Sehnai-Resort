@@ -1,23 +1,27 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { Menu, X, Phone } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Link, usePathname } from "@/i18n/navigation";
 import { siteLinks } from "@/lib/site-config";
+import { LanguageToggle } from "./LanguageToggle";
 
-const navLinks = [
-  { label: "Home", href: "/" },
-  { label: "Marriage Hall", href: "/marriage-hall" },
-  { label: "Restaurant", href: "/restaurant" },
-  { label: "Hotel", href: "/hotel" },
+type NavHref = "/" | "/marriage-hall" | "/restaurant" | "/hotel";
+
+const navLinks: { labelKey: "home" | "marriageHall" | "restaurant" | "hotel"; href: NavHref }[] = [
+  { labelKey: "home", href: "/" },
+  { labelKey: "marriageHall", href: "/marriage-hall" },
+  { labelKey: "restaurant", href: "/restaurant" },
+  { labelKey: "hotel", href: "/hotel" },
 ];
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
+  const t = useTranslations("nav");
 
   const isHome = pathname === "/";
 
@@ -71,7 +75,7 @@ export function Navbar() {
               lineHeight: 1,
             }}
           >
-            SEHNAI RESORT
+            SHEHNAI RESORT
           </span>
         </Link>
 
@@ -99,7 +103,7 @@ export function Navbar() {
                     (e.target as HTMLElement).style.color = "rgba(255,255,255,0.75)";
                 }}
               >
-                {link.label}
+                {t(link.labelKey)}
                 {active && (
                   <motion.div
                     layoutId="nav-underline"
@@ -112,11 +116,15 @@ export function Navbar() {
           })}
         </div>
 
-        {/* Right side: CTA + Mobile Toggle */}
-        <div className="flex items-center gap-4">
+        {/* Right side: Language toggle + CTA + Mobile Toggle */}
+        <div className="flex items-center gap-3 md:gap-5">
+          <div className="hidden md:block">
+            <LanguageToggle />
+          </div>
+
           <a
             href={siteLinks.tel}
-            className="hidden md:flex items-center gap-2 font-inter transition-all duration-300 border"
+            className="btn-premium-outline hidden md:flex items-center gap-2 font-inter border"
             style={{
               fontFamily: "'Inter', sans-serif",
               fontSize: "0.72rem",
@@ -137,7 +145,7 @@ export function Navbar() {
             }}
           >
             <Phone size={12} />
-            Book Now
+            {t("bookNow")}
           </a>
 
           <button
@@ -207,16 +215,39 @@ export function Navbar() {
                         borderBottom: "1px solid rgba(255,255,255,0.06)",
                       }}
                     >
-                      {link.label}
+                      {t(link.labelKey)}
                       {active && <div className="w-1.5 h-1.5 rounded-full bg-[#C9A84C]" />}
                     </Link>
                   </motion.div>
                 );
               })}
+
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
+                transition={{ delay: 0.28 }}
+                className="pt-5 flex items-center justify-between"
+                style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", paddingBottom: "1rem" }}
+              >
+                <span
+                  className="font-inter uppercase"
+                  style={{
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: "0.7rem",
+                    letterSpacing: "0.25em",
+                    color: "rgba(255,255,255,0.4)",
+                    fontWeight: 500,
+                  }}
+                >
+                  Language
+                </span>
+                <LanguageToggle compact />
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.34 }}
                 className="pt-4"
               >
                 <a
@@ -229,7 +260,7 @@ export function Navbar() {
                   }}
                 >
                   <Phone size={14} />
-                  Call to Book Now
+                  {t("callToBook")}
                 </a>
               </motion.div>
             </div>

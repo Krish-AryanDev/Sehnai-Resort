@@ -1,5 +1,6 @@
-import Link from "next/link";
-import { Phone, Mail, MapPin } from "lucide-react";
+﻿import { Phone, Mail, MapPin } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { Instagram, Facebook, Twitter } from "./SocialIcons";
 import { siteConfig } from "@/lib/site-config";
 
@@ -36,7 +37,6 @@ const socials: { Icon: typeof Instagram; href: string; label: string }[] = [
   { Icon: Facebook, href: siteConfig.social.facebook, label: "Facebook" },
   { Icon: Twitter, href: siteConfig.social.twitter, label: "Twitter" },
 ];
-const bottomLinks = ["Privacy Policy", "Terms of Service", "Contact Us"];
 
 function FooterColumn({
   title,
@@ -45,7 +45,7 @@ function FooterColumn({
 }: {
   title: string;
   links: string[];
-  href: string;
+  href: "/marriage-hall" | "/restaurant" | "/hotel";
 }) {
   return (
     <div>
@@ -85,7 +85,10 @@ function FooterColumn({
 }
 
 export function Footer() {
+  const t = useTranslations("footer");
   const currentYear = new Date().getFullYear();
+
+  const bottomLinks = [t("bottom.privacy"), t("bottom.terms"), t("bottom.contact")];
 
   return (
     <footer
@@ -94,10 +97,8 @@ export function Footer() {
         borderTop: "1px solid rgba(201, 168, 76, 0.15)",
       }}
     >
-      {/* Main footer content */}
       <div className="max-w-7xl mx-auto px-6 md:px-10 py-16 md:py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
-          {/* Brand Column */}
           <div className="lg:col-span-1">
             <div className="mb-5">
               <p
@@ -122,7 +123,7 @@ export function Footer() {
                   lineHeight: 1,
                 }}
               >
-                SEHNAI RESORT
+                SHEHNAI RESORT
               </h2>
             </div>
 
@@ -137,10 +138,9 @@ export function Footer() {
                 fontWeight: 300,
               }}
             >
-              Three exceptional experiences under one roof — a magnificent marriage hall, a fine dining restaurant, and a boutique luxury hotel.
+              {t("tagline")}
             </p>
 
-            {/* Contact info */}
             <div className="flex flex-col gap-3 mb-6">
               {contactInfo.map(({ icon: Icon, text }) => (
                 <div key={text} className="flex items-center gap-2">
@@ -158,7 +158,6 @@ export function Footer() {
               ))}
             </div>
 
-            {/* Social icons */}
             <div className="flex items-center gap-3">
               {socials.map(({ Icon, href, label }) => (
                 <a
@@ -175,13 +174,12 @@ export function Footer() {
             </div>
           </div>
 
-          <FooterColumn title="Marriage Hall" links={hallLinks} href="/marriage-hall" />
-          <FooterColumn title="Restaurant" links={restaurantLinks} href="/restaurant" />
-          <FooterColumn title="Hotel" links={hotelLinks} href="/hotel" />
+          <FooterColumn title={t("columns.marriageHall")} links={hallLinks} href="/marriage-hall" />
+          <FooterColumn title={t("columns.restaurant")} links={restaurantLinks} href="/restaurant" />
+          <FooterColumn title={t("columns.hotel")} links={hotelLinks} href="/hotel" />
         </div>
       </div>
 
-      {/* Bottom bar */}
       <div
         style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
         className="max-w-7xl mx-auto px-6 md:px-10 py-5 flex flex-col md:flex-row items-center justify-between gap-3"
@@ -194,7 +192,7 @@ export function Footer() {
             letterSpacing: "0.06em",
           }}
         >
-          © {currentYear} Sehnai Resort. All rights reserved.
+          © {currentYear} Shehnai Resort. {t("bottom.rights")}
         </span>
         <div className="flex items-center gap-6">
           {bottomLinks.map((item) => (

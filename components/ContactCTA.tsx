@@ -1,4 +1,4 @@
-import { Phone } from "lucide-react";
+﻿import { Phone } from "lucide-react";
 import { FadeIn } from "./FadeIn";
 import { siteLinks } from "@/lib/site-config";
 
@@ -48,7 +48,7 @@ export function ContactCTA({
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
               href={primaryHref}
-              className="inline-flex items-center gap-3 bg-[#C9A84C] text-black hover:bg-[#dfc068] transition-all duration-300 font-inter"
+              className="btn-premium inline-flex items-center gap-3 bg-[#C9A84C] text-black hover:bg-[#dfc068] font-inter"
               style={{
                 fontFamily: "'Inter', sans-serif",
                 fontSize: "0.72rem",
@@ -63,7 +63,7 @@ export function ContactCTA({
             </a>
             {secondaryLabel && (
               <button
-                className="inline-flex items-center gap-3 font-inter border border-white/15 text-white/60 hover:border-[#C9A84C] hover:text-[#C9A84C] transition-all duration-300"
+                className="btn-premium-outline inline-flex items-center gap-3 font-inter border border-white/15 text-white/60 hover:border-[#C9A84C] hover:text-[#C9A84C]"
                 style={{
                   fontFamily: "'Inter', sans-serif",
                   fontSize: "0.72rem",
