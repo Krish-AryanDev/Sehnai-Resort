@@ -18,7 +18,7 @@ const serviceMeta: Record<
   marriageHall: {
     path: "/marriage-hall",
     image:
-      "https://images.unsplash.com/photo-1759519238029-689e99c6d19e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3ZWRkaW5nJTIwY2VyZW1vbnklMjBmbG9yYWwlMjBkZWNvcmF0aW9uJTIwYmFsbHJvb218ZW58MXx8fHwxNzc4NTIxNzA0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "/images/home-page-first-image.jpeg",
   },
   restaurant: {
     path: "/restaurant",
@@ -129,7 +129,7 @@ export default function HomePage() {
                     style={{ aspectRatio: "4/3", cursor: "pointer" }}
                     onClick={() => router.push(path)}
                   >
-                    <SmartImage src={image} alt={tServices(`${key}.tag`)} hoverScale={1.04} containerClassName="w-full h-full" />
+                    <SmartImage src={image} alt={tServices(`${key}.tag`)} hoverScale={1.04} containerClassName="absolute inset-0" />
                     <div className="absolute top-0 left-0 w-12 h-12 pointer-events-none" style={{ borderTop: "2px solid #C9A84C", borderLeft: "2px solid #C9A84C" }} />
                     <div className="absolute bottom-0 right-0 w-12 h-12 pointer-events-none" style={{ borderBottom: "2px solid #C9A84C", borderRight: "2px solid #C9A84C" }} />
                   </div>
