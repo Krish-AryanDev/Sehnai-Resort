@@ -11,13 +11,13 @@ export const siteConfig = {
   brand: "Shehnai Resort",
 
   // Raw phone — used for tel: links. Must include country code and no spaces.
-  phone: process.env.NEXT_PUBLIC_PHONE_NUMBER ?? "+0000000000",
+  phone: process.env.NEXT_PUBLIC_PHONE_NUMBER ?? "+917909000040",
 
   // Pretty-formatted phone — shown to users (footer, contact card).
-  phoneDisplay: process.env.NEXT_PUBLIC_PHONE_DISPLAY ?? "+00 000 0000000",
+  phoneDisplay: process.env.NEXT_PUBLIC_PHONE_DISPLAY ?? "+91 79090 00040",
 
   // WhatsApp number — country code first, no '+', spaces, or dashes.
-  whatsapp: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "91XXXXXXXXXX",
+  whatsapp: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "917909000040",
 
   email: process.env.NEXT_PUBLIC_EMAIL ?? "info@shehnairesort.com",
 
