@@ -27,7 +27,6 @@ export function SmartImage({
   const [loaded, setLoaded] = useState(false);
   const imgRef = useRef<HTMLImageElement | null>(null);
 
-  // Catch cached images that finish loading before React attaches onLoad
   useEffect(() => {
     if (imgRef.current?.complete && imgRef.current.naturalWidth > 0) {
       setLoaded(true);
@@ -39,12 +38,15 @@ export function SmartImage({
       className={`overflow-hidden ${containerClassName}`}
       style={containerStyle}
     >
-      <div className="relative w-full h-full">
-        {/* Skeleton shimmer — fades out once the image is decoded */}
+      {/* Inner fill layer — uses absolute inset-0 so height always resolves
+          regardless of whether the outer container uses aspect-ratio or h-full */}
+      <div style={{ position: "absolute", inset: 0 }}>
         <div
           aria-hidden
-          className="absolute inset-0 transition-opacity duration-700 ease-out"
+          className="transition-opacity duration-700 ease-out"
           style={{
+            position: "absolute",
+            inset: 0,
             opacity: loaded ? 0 : 1,
             background:
               "linear-gradient(90deg, #0a0a13 0%, #16161f 50%, #0a0a13 100%)",
@@ -68,7 +70,15 @@ export function SmartImage({
           transition={{ duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
           whileHover={hoverScale ? { scale: hoverScale } : undefined}
           className={className}
-          style={{ objectPosition }}
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: objectPosition ?? "center",
+            display: "block",
+          }}
         />
       </div>
     </div>
