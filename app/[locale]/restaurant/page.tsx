@@ -69,7 +69,7 @@ export default function RestaurantPage() {
             <FadeIn>
               <div className="relative">
                 <SmartImage
-                  src="https://images.unsplash.com/photo-1750943024048-a4c9912b1425?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnb3VybWV0JTIwZm9vZCUyMHBsYXRpbmclMjBlbGVnYW50JTIwZGlzaHxlbnwxfHx8fDE3Nzg1MjE3MDR8MA&ixlib=rb-4.1.0&q=80&w=1080"
+                  src="/images/mocktail-image.jpeg"
                   alt="Fine dining"
                   containerClassName="w-full"
                   containerStyle={{ aspectRatio: "4/3" }}
