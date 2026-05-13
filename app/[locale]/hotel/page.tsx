@@ -15,7 +15,7 @@ const rooms = [
     price: "From ₹1,500 / night",
     description: "Elegantly appointed rooms with all essentials for a comfortable stay, featuring plush bedding and modern finishes.",
     features: ["King / Twin Bed", "En-suite Bathroom", "Smart TV", "Work Desk", "Free Wi-Fi"],
-    image: "https://images.unsplash.com/photo-1776763018821-8feeaeeee0a5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBob3RlbCUyMHJvb20lMjBpbnRlcmlvciUyMGVsZWdhbnR8ZW58MXx8fHwxNzc4NDgyNTc3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+    image: "/images/room-image.jpeg",
     highlight: false,
   },
   {
@@ -58,7 +58,7 @@ export default function HotelPage() {
         eyebrow={t("hero.eyebrow")}
         title={t("hero.title")}
         description={t("hero.description")}
-        image="https://images.unsplash.com/photo-1776763018821-8feeaeeee0a5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBob3RlbCUyMHJvb20lMjBpbnRlcmlvciUyMGVsZWdhbnR8ZW58MXx8fHwxNzc4NDgyNTc3fDA&ixlib=rb-4.1.0&q=80&w=1080"
+        image="/images/room-image.jpeg"
       />
 
       <section className="py-20 md:py-28" style={{ backgroundColor: "#07070d" }}>

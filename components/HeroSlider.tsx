@@ -26,7 +26,7 @@ const slides: { key: SlideKey; number: string; path: SlidePath; image: string; p
     number: "02",
     path: "/restaurant",
     image:
-      "https://images.unsplash.com/photo-1776993298456-98c71c0e177e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjByZXN0YXVyYW50JTIwZmluZSUyMGRpbmluZyUyMGludGVyaW9yfGVufDF8fHx8MTc3ODUyMTY4N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "/images/restaurant-images.jpeg",
     position: "center",
   },
   {
@@ -34,7 +34,7 @@ const slides: { key: SlideKey; number: string; path: SlidePath; image: string; p
     number: "03",
     path: "/hotel",
     image:
-      "https://images.unsplash.com/photo-1776763018821-8feeaeeee0a5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBob3RlbCUyMHJvb20lMjBpbnRlcmlvciUyMGVsZWdhbnR8ZW58MXx8fHwxNzc4NDgyNTc3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "/images/room-image.jpeg",
     position: "center",
   },
 ];

@@ -28,7 +28,7 @@ const serviceMeta: Record<
   hotel: {
     path: "/hotel",
     image:
-      "https://images.unsplash.com/photo-1771206331424-44b8ec9acdf4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob3RlbCUyMGxvYmJ5JTIwcHJlbWl1bSUyMGFyY2hpdGVjdHVyZXxlbnwxfHx8fDE3Nzg1MjE3MDV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "/images/room-image.jpeg",
   },
 };
 
