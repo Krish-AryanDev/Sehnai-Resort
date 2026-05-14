@@ -6,13 +6,14 @@ import { FadeIn } from "@/components/FadeIn";
 import { PageHero } from "@/components/PageHero";
 import { ContactCTA } from "@/components/ContactCTA";
 import { SmartImage } from "@/components/SmartImage";
+import { Link } from "@/i18n/navigation";
 import { siteLinks } from "@/lib/site-config";
 
 const menuCategories = [
-  { name: "Starters", emoji: "🥗", items: ["Bruschetta al Pomodoro", "Seared Scallops", "Spiced Lamb Kibbeh", "Truffle Arancini"] },
-  { name: "Mains", emoji: "🍽️", items: ["Pan-Seared Salmon", "Slow-Roasted Prime Rib", "Chicken Tikka Masala", "Mushroom Risotto"] },
-  { name: "Desserts", emoji: "🍮", items: ["Crème Brûlée", "Chocolate Fondant", "Saffron Panna Cotta", "Mango Tarte Tatin"] },
-  { name: "Beverages", emoji: "🍷", items: ["Curated Wine Selection", "Artisan Cocktails", "Fresh Juices & Mocktails", "Premium Teas & Coffee"] },
+  { name: "Tandoor & Starters", emoji: "🔥", items: ["Paneer Tikka", "Chicken Tikka", "Mushroom Tikka", "Paneer Hariyali Tikka"] },
+  { name: "Main Course", emoji: "🍽️", items: ["Paneer Butter Masala", "Chicken Butter Masala", "Dal Makhani", "Mutton Rogan Josh"] },
+  { name: "Biryani & Rice", emoji: "🍚", items: ["Chicken Biryani", "Mutton Biryani", "Veg Biryani", "Paneer Pulao"] },
+  { name: "Beverages", emoji: "🥤", items: ["Mint Mojito", "Piña Colada", "Butterscotch Shake", "Shehnai Special"] },
 ];
 
 const highlights = [
@@ -123,10 +124,14 @@ export default function RestaurantPage() {
 
           <FadeIn delay={0.2}>
             <div className="text-center mt-10">
-              <button className="flex items-center gap-3 font-inter mx-auto group" style={{ fontFamily: "'Inter', sans-serif", fontSize: "0.72rem", letterSpacing: "0.22em", fontWeight: 600, textTransform: "uppercase", color: "#C9A84C", background: "none", border: "none", cursor: "pointer" }}>
+              <Link
+                href="/restaurant/menu"
+                className="inline-flex items-center gap-3 font-inter group"
+                style={{ fontFamily: "'Inter', sans-serif", fontSize: "0.72rem", letterSpacing: "0.22em", fontWeight: 600, textTransform: "uppercase", color: "#C9A84C" }}
+              >
                 View Full Menu
                 <ArrowRight size={13} className="group-hover:translate-x-1.5 transition-transform duration-300" />
-              </button>
+              </Link>
             </div>
           </FadeIn>
         </div>

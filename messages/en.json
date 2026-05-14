@@ -104,6 +104,26 @@
       "primary": "Reserve Now"
     }
   },
+  "menu": {
+    "back": "Back to Restaurant",
+    "eyebrow": "Shehnai Resort",
+    "title": "Our Full Menu",
+    "subtitle": "A celebration of timeless Indian flavors, hand-crafted Indo-Chinese classics, and indulgent shakes — every dish prepared to order, with care.",
+    "half": "Half",
+    "full": "Full",
+    "legend": {
+      "veg": "Vegetarian",
+      "nonVeg": "Non-Vegetarian"
+    },
+    "footerNote": {
+      "eyebrow": "A Note From The Kitchen",
+      "body": "All prices are in Indian Rupees and inclusive of applicable taxes. Our menu changes with the seasons, and certain dishes may be prepared on request. Please inform our staff of any allergies or dietary preferences."
+    },
+    "cta": {
+      "reserve": "Reserve a Table",
+      "back": "Back to Restaurant"
+    }
+  },
   "hotel": {
     "hero": {
       "eyebrow": "Boutique Hotel",
