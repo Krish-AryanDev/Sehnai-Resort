@@ -137,6 +137,40 @@
       "secondary": "Check Availability"
     }
   },
+  "roomDetail": {
+    "back": "Back to Hotel",
+    "eyebrow": "Room Details",
+    "aboutTitle": "About This Room",
+    "chooseVariantTitle": "Choose Your Room",
+    "chooseVariantSubtitle": "Pick the option that best fits your stay",
+    "amenitiesTitle": "Amenities & Inclusions",
+    "policiesTitle": "Hotel Policies",
+    "policyCheckIn": "Check-in from 2:00 PM",
+    "policyCheckOut": "Check-out by 11:00 AM",
+    "policyNoRefund": "Bookings are non-refundable. Please review your dates carefully before confirming.",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "guests": "Guests",
+    "perNight": "/ night",
+    "startingFrom": "Starting from",
+    "roomsAvailable": "{count} rooms available",
+    "soldOut": "Sold out for these dates",
+    "select": "Select",
+    "selected": "Selected",
+    "bookNow": "Book Now",
+    "callToBook": "Call to Book",
+    "total": "Total",
+    "nights": "{count} nights",
+    "otherRoomsTitle": "Other Rooms You May Like",
+    "notFoundTitle": "Room Not Found",
+    "notFoundMessage": "The room you're looking for doesn't exist.",
+    "noRefund": {
+      "title": "Before You Continue",
+      "body": "This booking is non-refundable. Once payment is processed, the amount cannot be returned and the booking cannot be cancelled. Please confirm your dates and room choice before proceeding.",
+      "confirm": "I Understand — Continue",
+      "cancel": "Cancel"
+    }
+  },
   "footer": {
     "tagline": "Three exceptional experiences under one roof — a magnificent marriage hall, a fine dining restaurant, and a boutique luxury hotel.",
     "columns": {

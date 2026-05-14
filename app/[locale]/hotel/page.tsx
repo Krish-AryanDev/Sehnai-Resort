@@ -6,39 +6,31 @@ import { FadeIn } from "@/components/FadeIn";
 import { PageHero } from "@/components/PageHero";
 import { ContactCTA } from "@/components/ContactCTA";
 import { SmartImage } from "@/components/SmartImage";
+import { Link } from "@/i18n/navigation";
+import {
+  roomCategories,
+  getStartingPrice,
+  getTotalRoomCount,
+} from "@/lib/rooms-data";
 
-const rooms = [
-  {
-    type: "Standard Room",
-    count: "4 Rooms",
-    size: "280 sq ft",
-    price: "From ₹1,399 / night",
-    description: "Elegantly appointed rooms with all essentials for a comfortable stay, featuring plush bedding and modern finishes.",
-    features: ["King / Twin Bed", "En-suite Bathroom", "Smart TV", "Work Desk", "Free Wi-Fi"],
-    image: "/images/room-image.jpeg",
-    highlight: false,
-  },
-  {
-    type: "Deluxe Room",
-    count: "7 Rooms",
-    size: "380 sq ft",
-    price: "From ₹1,699 / night",
-    description: "Spacious rooms with premium furnishings, upgraded amenities, and stunning city or garden views — perfect for longer stays.",
-    features: ["King Bed", "Luxury Bathroom", "Smart TV", "Premium Toiletries", "Daily Turn-down"],
-    image: "https://images.unsplash.com/photo-1771206331424-44b8ec9acdf4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob3RlbCUyMGxvYmJ5JTIwcHJlbWl1bSUyMGFyY2hpdGVjdHVyZXxlbnwxfHx8fDE3Nzg1MjE3MDV8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    highlight: true,
-  },
-  {
-    type: "Suite",
-    count: "1 Suite",
-    size: "560 sq ft",
-    price: "From ₹3,199 / night",
-    description: "Our exclusive suites offer a complete luxury experience with a separate living area, premium décor, and personalised service.",
-    features: ["King Bed + Lounge", "Jacuzzi Bath", "Dining Area", "Priority Room Service", "Late Checkout"],
-    image: "https://images.unsplash.com/photo-1561811358-21aef14f0551?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob3RlbCUyMHN3aW1taW5nJTIwcG9vbCUyMHJlc29ydCUyMGx1eHVyeSUyMG91dGRvb3J8ZW58MXx8fHwxNzc4NTIxNzA4fDA&ixlib=rb-4.1.0&q=80&w=1080",
-    highlight: false,
-  },
-];
+/* Adapt the new RoomCategory schema to the visual shape this page's card
+   was already built for. Keeps the existing markup untouched while sourcing
+   from lib/rooms-data.ts (shared with /hotel/rooms/[id]). */
+const rooms = roomCategories.map((c) => {
+  const count = getTotalRoomCount(c);
+  const price = getStartingPrice(c);
+  return {
+    id: c.id,
+    type: c.name,
+    count: c.id === "suite" ? `${count} Suite` : `${count} Rooms`,
+    size: `${c.variants[0].sizeSqFt} sq ft`,
+    price: `From ₹${price.toLocaleString("en-IN")} / night`,
+    description: c.description,
+    features: c.highlights,
+    image: c.heroImage,
+    highlight: !!c.highlight,
+  };
+});
 
 const amenities = [
   { icon: Wifi, label: "High-Speed Wi-Fi", desc: "Complimentary fiber Wi-Fi throughout the property" },
@@ -129,13 +121,14 @@ export default function HotelPage() {
                       ))}
                     </ul>
 
-                    <button
+                    <Link
+                      href={`/hotel/rooms/${room.id}`}
                       className={`${room.highlight ? "btn-premium" : "btn-premium-outline"} w-full py-3 font-inter flex items-center justify-center gap-2 group`}
                       style={{ fontFamily: "'Inter', sans-serif", fontSize: "0.68rem", letterSpacing: "0.2em", fontWeight: 600, textTransform: "uppercase", backgroundColor: room.highlight ? "#C9A84C" : "transparent", color: room.highlight ? "#000" : "#C9A84C", border: room.highlight ? "none" : "1px solid rgba(201,168,76,0.35)" }}
                     >
                       Book This Room
                       <ArrowRight size={11} className="group-hover:translate-x-1 transition-transform duration-300" />
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </FadeIn>
