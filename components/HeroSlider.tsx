@@ -144,8 +144,8 @@ export function HeroSlider() {
         </motion.div>
       </AnimatePresence>
 
-      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/10 pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-r from-black/70 via-black/40 to-black/10 pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-black/30 pointer-events-none" />
 
       <div className="absolute right-10 top-1/2 -translate-y-1/2 z-20 hidden lg:flex flex-col items-center gap-3">
         <AnimatePresence mode="wait">

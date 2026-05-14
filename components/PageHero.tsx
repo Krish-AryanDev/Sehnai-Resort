@@ -22,7 +22,7 @@ export function PageHero({ eyebrow, title, description, image }: PageHeroProps) 
         priority
         containerClassName="absolute inset-0"
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/80 pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-b from-black/50 via-black/30 to-black/80 pointer-events-none" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-10 w-full">
         <motion.div

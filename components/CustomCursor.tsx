@@ -68,7 +68,7 @@ export function CustomCursor() {
       {/* Outer trailing ring */}
       <motion.div
         aria-hidden
-        className="fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-difference"
+        className="fixed top-0 left-0 pointer-events-none z-9999 mix-blend-difference"
         style={{ x: ringX, y: ringY }}
       >
         <motion.div
@@ -92,7 +92,7 @@ export function CustomCursor() {
       {/* Inner dot (exact position) */}
       <motion.div
         aria-hidden
-        className="fixed top-0 left-0 pointer-events-none z-[9999]"
+        className="fixed top-0 left-0 pointer-events-none z-9999"
         style={{ x: mouseX, y: mouseY }}
       >
         <motion.div
