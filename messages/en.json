@@ -151,6 +151,12 @@
     "checkIn": "Check-in",
     "checkOut": "Check-out",
     "guests": "Guests",
+    "guestsMax": "Max {count} per room",
+    "dates": {
+      "pickCheckIn": "Pick a check-in date",
+      "pickCheckOut": "Pick a check-out date",
+      "done": "Done"
+    },
     "perNight": "/ night",
     "startingFrom": "Starting from",
     "roomsAvailable": "{count} rooms available",

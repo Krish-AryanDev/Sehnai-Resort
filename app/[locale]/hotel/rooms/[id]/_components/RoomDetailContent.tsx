@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { ArrowLeft, Check, AlertTriangle, BedDouble, Users, Maximize2, Wifi, Phone } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { FadeIn } from "@/components/FadeIn";
@@ -16,6 +16,7 @@ import { RoomGallery } from "./RoomGallery";
 import { VariantSelector } from "./VariantSelector";
 import { BookingSummary } from "./BookingSummary";
 import { NoRefundDialog } from "./NoRefundDialog";
+import { StayStrip } from "./StayStrip";
 
 type RoomDetailContentProps = {
   category: RoomCategory;
@@ -38,9 +39,9 @@ export function RoomDetailContent({ category }: RoomDetailContentProps) {
     return { checkIn: iso(today), checkOut: iso(tomorrow) };
   }, []);
 
-  const [checkIn] = useState(defaults.checkIn);
-  const [checkOut] = useState(defaults.checkOut);
-  const [guests] = useState(2);
+  const [checkIn, setCheckIn] = useState(defaults.checkIn);
+  const [checkOut, setCheckOut] = useState(defaults.checkOut);
+  const [guests, setGuests] = useState(2);
 
   // Default-select the cheapest variant that has availability for these dates
   const [selectedVariantId, setSelectedVariantId] = useState<string>(() => {
@@ -59,6 +60,18 @@ export function RoomDetailContent({ category }: RoomDetailContentProps) {
     selectedVariant
       ? countAvailableInVariant(selectedVariant.id, checkIn, checkOut) === 0
       : false;
+
+  // Clamp guest count when switching to a variant with a lower max capacity.
+  useEffect(() => {
+    if (selectedVariant && guests > selectedVariant.maxGuests) {
+      setGuests(selectedVariant.maxGuests);
+    }
+  }, [selectedVariant, guests]);
+
+  const handleDatesChange = (newCheckIn: string, newCheckOut: string) => {
+    setCheckIn(newCheckIn);
+    setCheckOut(newCheckOut);
+  };
 
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -208,6 +221,23 @@ export function RoomDetailContent({ category }: RoomDetailContentProps) {
                 </div>
               </FadeIn>
 
+              {/* Stay strip — mobile-only date + guest controls.
+                  Lives above the variants so changing dates here makes the
+                  "X rooms available" counts below recompute before the user
+                  picks. On lg+, the same fields are inside <BookingSummary />. */}
+              <div className="lg:hidden mb-10">
+                <FadeIn>
+                  <StayStrip
+                    checkIn={checkIn}
+                    checkOut={checkOut}
+                    guests={guests}
+                    maxGuests={selectedVariant?.maxGuests ?? 4}
+                    onDatesChange={handleDatesChange}
+                    onGuestsChange={setGuests}
+                  />
+                </FadeIn>
+              </div>
+
               {/* Variant selector */}
               <FadeIn>
                 <SectionEyebrow label={t("chooseVariantTitle")} />
@@ -293,6 +323,9 @@ export function RoomDetailContent({ category }: RoomDetailContentProps) {
                 checkIn={checkIn}
                 checkOut={checkOut}
                 guests={guests}
+                maxGuests={selectedVariant?.maxGuests ?? 4}
+                onDatesChange={handleDatesChange}
+                onGuestsChange={setGuests}
                 onBookNow={() => setDialogOpen(true)}
                 callHref={siteLinks.tel}
                 isSoldOut={selectedSoldOut}

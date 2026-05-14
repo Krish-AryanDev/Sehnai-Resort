@@ -1,30 +1,37 @@
 "use client";
 
-import { Phone, Calendar, Users } from "lucide-react";
+import { Phone } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { RoomVariant } from "@/lib/rooms-data";
+import { DateRangePicker } from "./DateRangePicker";
+import { GuestStepper } from "./GuestStepper";
 
 type BookingSummaryProps = {
   variant: RoomVariant | null;
   checkIn: string;
   checkOut: string;
   guests: number;
+  maxGuests: number;
+  onDatesChange: (checkIn: string, checkOut: string) => void;
+  onGuestsChange: (n: number) => void;
   onBookNow: () => void;
   callHref: string;
   isSoldOut: boolean;
 };
 
 /**
- * Sticky right-column booking card. Read-only date/guest fields for this
- * iteration — the real date picker arrives with the payment integration.
- * The "Book Now" button delegates to `onBookNow`, which opens the
- * NoRefundDialog at the page level.
+ * Sticky right-column booking card. Owns the visual layout and delegates all
+ * field interactions to <DateRangePicker /> and <GuestStepper />. The page
+ * (RoomDetailContent) owns the date/guest state; this card just reads & writes.
  */
 export function BookingSummary({
   variant,
   checkIn,
   checkOut,
   guests,
+  maxGuests,
+  onDatesChange,
+  onGuestsChange,
   onBookNow,
   callHref,
   isSoldOut,
@@ -43,7 +50,7 @@ export function BookingSummary({
         position: "relative",
       }}
     >
-      {/* Decorative top corner mark */}
+      {/* Decorative corner marks */}
       <div
         className="absolute top-0 left-0 w-10 h-10 pointer-events-none"
         style={{ borderTop: "2px solid #C9A84C", borderLeft: "2px solid #C9A84C" }}
@@ -97,13 +104,18 @@ export function BookingSummary({
         style={{ backgroundColor: "rgba(255,255,255,0.06)" }}
       />
 
-      {/* Date / guest fields — read-only placeholders */}
-      <div className="grid grid-cols-2 gap-3 mb-5">
-        <ReadOnlyField icon={<Calendar size={11} />} label={t("checkIn")} value={formatDate(checkIn)} />
-        <ReadOnlyField icon={<Calendar size={11} />} label={t("checkOut")} value={formatDate(checkOut)} />
-      </div>
-      <div className="mb-6">
-        <ReadOnlyField icon={<Users size={11} />} label={t("guests")} value={`${guests}`} />
+      {/* Date picker + guest stepper — lg+ only. On smaller screens the same
+          controls live above the variant selector inside <StayStrip />, so
+          showing them here too would be duplicate UI. */}
+      <div className="hidden lg:block mb-6">
+        <div className="mb-3">
+          <DateRangePicker
+            checkIn={checkIn}
+            checkOut={checkOut}
+            onChange={onDatesChange}
+          />
+        </div>
+        <GuestStepper value={guests} max={maxGuests} onChange={onGuestsChange} />
       </div>
 
       {/* Total */}
@@ -190,63 +202,6 @@ export function BookingSummary({
       </div>
     </aside>
   );
-}
-
-/* ----------------------------------------------------------------------
-   Sub-components & utils
-   ---------------------------------------------------------------------- */
-
-function ReadOnlyField({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div
-      className="p-3"
-      style={{
-        backgroundColor: "#0a0a13",
-        border: "1px solid rgba(255,255,255,0.05)",
-      }}
-    >
-      <div className="flex items-center gap-1.5 mb-1">
-        <span className="text-[#C9A84C]">{icon}</span>
-        <span
-          className="text-white/40"
-          style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: "0.6rem",
-            letterSpacing: "0.16em",
-            textTransform: "uppercase",
-            fontWeight: 600,
-          }}
-        >
-          {label}
-        </span>
-      </div>
-      <span
-        className="text-white"
-        style={{
-          fontFamily: "'Inter', sans-serif",
-          fontSize: "0.85rem",
-          fontWeight: 500,
-        }}
-      >
-        {value}
-      </span>
-    </div>
-  );
-}
-
-function formatDate(iso: string): string {
-  // "YYYY-MM-DD" -> "12 Jun"
-  const [y, m, d] = iso.split("-").map(Number);
-  const date = new Date(y, m - 1, d);
-  return date.toLocaleDateString("en-IN", { day: "2-digit", month: "short" });
 }
 
 function nightsBetween(start: string, end: string): number {

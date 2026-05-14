@@ -151,6 +151,12 @@
     "checkIn": "चेक-इन",
     "checkOut": "चेक-आउट",
     "guests": "मेहमान",
+    "guestsMax": "अधिकतम {count} प्रति कमरा",
+    "dates": {
+      "pickCheckIn": "चेक-इन तिथि चुनें",
+      "pickCheckOut": "चेक-आउट तिथि चुनें",
+      "done": "हो गया"
+    },
     "perNight": "/ रात",
     "startingFrom": "शुरुआती मूल्य",
     "roomsAvailable": "{count} कमरे उपलब्ध",
