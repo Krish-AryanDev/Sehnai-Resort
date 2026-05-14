@@ -1,0 +1,380 @@
+/* Admin shell — deliberately plain. The public site is the marketing surface;
+   admin is a tool. Light, dense, keyboard-friendly. */
+
+.admin-root {
+  min-height: 100vh;
+  background: #f5f5f4;
+  color: #1c1917;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.admin-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: #fff;
+  border-bottom: 1px solid #e7e5e4;
+}
+.admin-brand {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #1c1917;
+  text-decoration: none;
+}
+.admin-userbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.admin-nav {
+  display: flex;
+  gap: 0.75rem;
+}
+.admin-nav a {
+  color: #57534e;
+  text-decoration: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+.admin-nav a:hover {
+  background: #f5f5f4;
+  color: #1c1917;
+}
+.admin-email {
+  color: #57534e;
+  font-size: 13px;
+}
+
+.admin-main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.admin-card {
+  background: #fff;
+  border: 1px solid #e7e5e4;
+  border-radius: 6px;
+  padding: 1.25rem;
+}
+.admin-card + .admin-card {
+  margin-top: 1rem;
+}
+
+.admin-h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 1rem;
+}
+.admin-h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.admin-table th,
+.admin-table td {
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #e7e5e4;
+  vertical-align: top;
+}
+.admin-table th {
+  font-weight: 600;
+  color: #57534e;
+  background: #fafaf9;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.admin-table tr:hover td {
+  background: #fafaf9;
+}
+
+.admin-link {
+  color: #0f766e;
+  text-decoration: none;
+}
+.admin-link:hover {
+  text-decoration: underline;
+}
+
+.admin-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.9rem;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: inherit;
+}
+.admin-button--primary {
+  background: #0f766e;
+  color: #fff;
+}
+.admin-button--primary:hover {
+  background: #115e59;
+}
+.admin-button--secondary {
+  background: #fff;
+  color: #1c1917;
+  border-color: #e7e5e4;
+}
+.admin-button--secondary:hover {
+  background: #f5f5f4;
+}
+.admin-button--danger {
+  background: #fff;
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+.admin-button--danger:hover {
+  background: #fef2f2;
+}
+.admin-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.admin-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-bottom: 1rem;
+}
+.admin-field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #57534e;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.admin-field input,
+.admin-field select,
+.admin-field textarea {
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #d6d3d1;
+  border-radius: 5px;
+  font: inherit;
+  background: #fff;
+  color: #1c1917;
+}
+.admin-field input:focus,
+.admin-field select:focus,
+.admin-field textarea:focus {
+  outline: none;
+  border-color: #0f766e;
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+}
+.admin-field--row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.admin-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.admin-pill--confirmed { background: #d1fae5; color: #065f46; }
+.admin-pill--pending   { background: #fef3c7; color: #854d0e; }
+.admin-pill--cancelled { background: #f5f5f4; color: #57534e; }
+.admin-pill--failed    { background: #fee2e2; color: #991b1b; }
+
+.admin-alert {
+  padding: 0.75rem 1rem;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+  font-size: 13px;
+}
+.admin-alert--error   { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+.admin-alert--success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+.admin-alert--info    { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+
+.admin-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.admin-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.admin-filters select {
+  padding: 0.35rem 0.6rem;
+  border: 1px solid #d6d3d1;
+  border-radius: 5px;
+  font: inherit;
+  background: #fff;
+}
+
+.admin-detail-grid {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.5rem 1.5rem;
+  font-size: 13px;
+}
+.admin-detail-grid dt {
+  color: #57534e;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  padding-top: 2px;
+}
+.admin-detail-grid dd {
+  margin: 0;
+  color: #1c1917;
+}
+
+/* ---------- Occupancy calendar ---------- */
+
+.cal-wrap {
+  position: relative;
+}
+.cal-grid {
+  display: grid;
+  grid-auto-rows: 48px;
+  background: #fff;
+}
+.cal-corner {
+  position: sticky;
+  left: 0;
+  top: 0;
+  z-index: 4;
+  background: #fafaf9;
+  border-right: 1px solid #e7e5e4;
+  border-bottom: 1px solid #e7e5e4;
+  grid-row: 1;
+  grid-column: 1;
+}
+.cal-day-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #fafaf9;
+  border-right: 1px solid #e7e5e4;
+  border-bottom: 1px solid #e7e5e4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  font-size: 11px;
+  color: #57534e;
+}
+.cal-day-header--weekend { background: #f5f5f4; }
+.cal-day-header--today {
+  background: #fef3c7;
+  color: #854d0e;
+  font-weight: 600;
+}
+.cal-day-dow {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 10px;
+}
+.cal-day-num {
+  font-weight: 600;
+  font-size: 12px;
+  color: #1c1917;
+}
+.cal-day-header--today .cal-day-num { color: #854d0e; }
+
+.cal-room-label {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: #fff;
+  border-right: 1px solid #e7e5e4;
+  border-bottom: 1px solid #f5f5f4;
+  padding: 0.5rem 0.75rem;
+  grid-column: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.cal-room-number {
+  font-weight: 600;
+  font-size: 13px;
+  color: #1c1917;
+}
+.cal-room-variant {
+  font-size: 11px;
+  color: #78716c;
+  margin-top: 1px;
+}
+
+.cal-day-cell {
+  border-right: 1px solid #f5f5f4;
+  border-bottom: 1px solid #f5f5f4;
+}
+.cal-day-cell--weekend { background: #fafaf9; }
+.cal-day-cell--today { background: #fffbeb; }
+
+.cal-bar {
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin: 5px 2px;
+  padding: 0 0.6rem;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+.cal-bar:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+}
+.cal-bar-label {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  flex: 1;
+}
+.cal-bar-dates {
+  font-size: 10px;
+  opacity: 0.7;
+  letter-spacing: 0.02em;
+}
+.cal-bar--confirmed { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+.cal-bar--pending   { background: #fef3c7; color: #854d0e; border: 1px solid #fcd34d; }
+.cal-bar--admin     { /* admin blocks get a subtle hatch via gradient */
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent 0,
+    transparent 4px,
+    rgba(0,0,0,0.04) 4px,
+    rgba(0,0,0,0.04) 5px
+  );
+}

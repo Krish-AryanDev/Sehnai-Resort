@@ -2,16 +2,18 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { ArrowLeft, Check, AlertTriangle, BedDouble, Users, Maximize2, Wifi, Phone } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { FadeIn } from "@/components/FadeIn";
 import { Link } from "@/i18n/navigation";
 import { siteLinks } from "@/lib/site-config";
 import {
   type RoomCategory,
+  type RoomBooking,
   roomCategories,
   findAvailableRoomForVariant,
   countAvailableInVariant,
 } from "@/lib/rooms-data";
+import { track, nightsBetween } from "@/lib/analytics";
 import { RoomGallery } from "./RoomGallery";
 import { VariantSelector } from "./VariantSelector";
 import { BookingSummary } from "./BookingSummary";
@@ -20,6 +22,7 @@ import { StayStrip } from "./StayStrip";
 
 type RoomDetailContentProps = {
   category: RoomCategory;
+  bookings: RoomBooking[];
 };
 
 /**
@@ -29,8 +32,9 @@ type RoomDetailContentProps = {
  *   - guest count
  *   - NoRefundDialog open state
  */
-export function RoomDetailContent({ category }: RoomDetailContentProps) {
+export function RoomDetailContent({ category, bookings }: RoomDetailContentProps) {
   const t = useTranslations("roomDetail");
+  const locale = useLocale();
 
   // ---- Placeholder default dates (today, today + 1) ----
   const defaults = useMemo(() => {
@@ -49,8 +53,15 @@ export function RoomDetailContent({ category }: RoomDetailContentProps) {
       (a, b) => a.pricePerNight - b.pricePerNight
     );
     return (
-      sorted.find((v) => countAvailableInVariant(v.id, defaults.checkIn, defaults.checkOut) > 0)?.id ??
-      category.variants[0].id
+      sorted.find(
+        (v) =>
+          countAvailableInVariant(
+            v.id,
+            defaults.checkIn,
+            defaults.checkOut,
+            bookings
+          ) > 0
+      )?.id ?? category.variants[0].id
     );
   });
 
@@ -58,7 +69,12 @@ export function RoomDetailContent({ category }: RoomDetailContentProps) {
     category.variants.find((v) => v.id === selectedVariantId) ?? null;
   const selectedSoldOut =
     selectedVariant
-      ? countAvailableInVariant(selectedVariant.id, checkIn, checkOut) === 0
+      ? countAvailableInVariant(
+          selectedVariant.id,
+          checkIn,
+          checkOut,
+          bookings
+        ) === 0
       : false;
 
   // Clamp guest count when switching to a variant with a lower max capacity.
@@ -78,21 +94,52 @@ export function RoomDetailContent({ category }: RoomDetailContentProps) {
   /* Other categories — shown at the bottom of the page */
   const otherCategories = roomCategories.filter((c) => c.id !== category.id);
 
+  /** Snapshot of booking state attached to every analytics event. Computed
+   *  fresh per call so it reflects whatever the user has in the form right
+   *  now (variant, dates, guests). */
+  const bookingContext = () => {
+    const nights = nightsBetween(checkIn, checkOut);
+    return {
+      variant_id: selectedVariant?.id ?? null,
+      category_id: category.id,
+      check_in: checkIn,
+      check_out: checkOut,
+      nights,
+      guests,
+      total: selectedVariant ? selectedVariant.pricePerNight * nights : 0,
+      locale,
+    };
+  };
+
+  const handleBookNow = (surface: "booking_summary" | "mobile_sticky") => {
+    track("book_now_clicked", { ...bookingContext(), surface });
+    setDialogOpen(true);
+  };
+
+  const handleCallClick = (surface: "booking_summary" | "mobile_sticky") => {
+    track("call_clicked", { ...bookingContext(), surface });
+    // Anchor's href still drives navigation; this just fires the event first.
+  };
+
+  const handleModalDismiss = () => {
+    track("modal_dismissed", bookingContext());
+    setDialogOpen(false);
+  };
+
   /* Triggered by the modal's "I Understand — Continue" button.
      For now we route to the phone dialer; this is the seam where the real
      payment gateway will plug in next iteration. */
   const handleConfirmBooking = () => {
     if (!selectedVariant) return;
-    const room = findAvailableRoomForVariant(selectedVariant.id, checkIn, checkOut);
-    // eslint-disable-next-line no-console
-    console.log("[booking]", {
-      categoryId: category.id,
-      variantId: selectedVariant.id,
-      roomId: room?.id ?? null,
+    const room = findAvailableRoomForVariant(
+      selectedVariant.id,
       checkIn,
       checkOut,
-      guests,
-      total: selectedVariant.pricePerNight,
+      bookings
+    );
+    track("modal_confirmed", {
+      ...bookingContext(),
+      assigned_room_id: room?.id ?? null,
     });
     setDialogOpen(false);
     window.location.href = siteLinks.tel;
@@ -257,6 +304,7 @@ export function RoomDetailContent({ category }: RoomDetailContentProps) {
                   onSelect={setSelectedVariantId}
                   checkIn={checkIn}
                   checkOut={checkOut}
+                  bookings={bookings}
                 />
               </FadeIn>
 
@@ -326,7 +374,8 @@ export function RoomDetailContent({ category }: RoomDetailContentProps) {
                 maxGuests={selectedVariant?.maxGuests ?? 4}
                 onDatesChange={handleDatesChange}
                 onGuestsChange={setGuests}
-                onBookNow={() => setDialogOpen(true)}
+                onBookNow={() => handleBookNow("booking_summary")}
+                onCallClick={() => handleCallClick("booking_summary")}
                 callHref={siteLinks.tel}
                 isSoldOut={selectedSoldOut}
               />
@@ -487,6 +536,7 @@ export function RoomDetailContent({ category }: RoomDetailContentProps) {
 
           <a
             href={siteLinks.tel}
+            onClick={() => handleCallClick("mobile_sticky")}
             aria-label={t("callToBook")}
             className="shrink-0 flex items-center justify-center"
             style={{
@@ -501,7 +551,7 @@ export function RoomDetailContent({ category }: RoomDetailContentProps) {
 
           <button
             type="button"
-            onClick={() => setDialogOpen(true)}
+            onClick={() => handleBookNow("mobile_sticky")}
             disabled={!selectedVariant || selectedSoldOut}
             className="shrink-0"
             style={{
@@ -526,7 +576,7 @@ export function RoomDetailContent({ category }: RoomDetailContentProps) {
       {/* ============= No-refund confirmation modal ============= */}
       <NoRefundDialog
         open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
+        onClose={handleModalDismiss}
         onConfirm={handleConfirmBooking}
       />
     </div>

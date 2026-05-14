@@ -2,7 +2,7 @@
 
 import { Check, Users, BedDouble } from "lucide-react";
 import { useTranslations } from "next-intl";
-import type { RoomVariant } from "@/lib/rooms-data";
+import type { RoomVariant, RoomBooking } from "@/lib/rooms-data";
 import { countAvailableInVariant } from "@/lib/rooms-data";
 
 type VariantSelectorProps = {
@@ -11,6 +11,7 @@ type VariantSelectorProps = {
   onSelect: (variantId: string) => void;
   checkIn: string;
   checkOut: string;
+  bookings: RoomBooking[];
 };
 
 /**
@@ -24,13 +25,19 @@ export function VariantSelector({
   onSelect,
   checkIn,
   checkOut,
+  bookings,
 }: VariantSelectorProps) {
   const t = useTranslations("roomDetail");
 
   return (
     <div className="grid grid-cols-1 gap-4">
       {variants.map((v) => {
-        const available = countAvailableInVariant(v.id, checkIn, checkOut);
+        const available = countAvailableInVariant(
+          v.id,
+          checkIn,
+          checkOut,
+          bookings
+        );
         const isSoldOut = available === 0;
         const isSelected = v.id === selectedId;
 

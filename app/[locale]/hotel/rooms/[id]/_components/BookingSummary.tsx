@@ -15,6 +15,7 @@ type BookingSummaryProps = {
   onDatesChange: (checkIn: string, checkOut: string) => void;
   onGuestsChange: (n: number) => void;
   onBookNow: () => void;
+  onCallClick?: () => void;
   callHref: string;
   isSoldOut: boolean;
 };
@@ -33,6 +34,7 @@ export function BookingSummary({
   onDatesChange,
   onGuestsChange,
   onBookNow,
+  onCallClick,
   callHref,
   isSoldOut,
 }: BookingSummaryProps) {
@@ -183,6 +185,7 @@ export function BookingSummary({
 
         <a
           href={callHref}
+          onClick={onCallClick}
           className="btn-premium-outline w-full flex items-center justify-center gap-2"
           style={{
             fontFamily: "'Inter', sans-serif",

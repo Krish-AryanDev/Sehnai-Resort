@@ -9,14 +9,16 @@
  *     └── RoomVariant   (e.g. "Standard AC")
  *           └── IndividualRoom   (e.g. room-101)
  *
- * Availability is tracked at the *individual room* level via `roomBookings`.
+ * Availability is tracked at the *individual room* level. The list of
+ * active bookings lives in Supabase (table `room_bookings`) and is fetched
+ * by the server component for /hotel/rooms/[id], then passed down to the
+ * client helpers in this module as an explicit `bookings: RoomBooking[]`
+ * argument.
+ *
  * The booking flow never asks the guest to pick a specific room number —
- * it just calls `findAvailableRoomForVariant(variantId, checkIn, checkOut)`
+ * it just calls `findAvailableRoomForVariant(variantId, ci, co, bookings)`
  * and assigns one. If no room in the variant is free, the variant card
  * is shown as "Sold out for these dates" and disabled.
- *
- * The admin panel (future) will append rows to `roomBookings`; no schema
- * changes will be needed.
  */
 
 export type RoomVariant = {
@@ -259,13 +261,6 @@ export const individualRooms: IndividualRoom[] = [
   { id: "room-001", roomNumber: "001", variantId: "suite", floor: 1, view: "Skyline View" },
 ];
 
-/**
- * Admin-managed list. Currently empty. To test availability, append a row
- * here in this file, save, and reload — the variant selector will reflect
- * it immediately.
- */
-export const roomBookings: RoomBooking[] = [];
-
 /* ======================================================================
    Helpers
    ====================================================================== */
@@ -278,21 +273,27 @@ export function getRoomsForVariant(variantId: string): IndividualRoom[] {
   return individualRooms.filter((r) => r.variantId === variantId);
 }
 
-export function getBookingsForRoom(roomId: string): RoomBooking[] {
-  return roomBookings.filter((b) => b.roomId === roomId);
+/** All physical rooms across every variant in a category. Used by the
+ *  server-side bookings fetch to narrow `room_id IN (...)`. */
+export function getRoomsForCategory(categoryId: string): IndividualRoom[] {
+  const cat = roomCategories.find((c) => c.id === categoryId);
+  if (!cat) return [];
+  const variantIds = new Set(cat.variants.map((v) => v.id));
+  return individualRooms.filter((r) => variantIds.has(r.variantId));
 }
 
 /**
- * True if `[checkIn, checkOut)` does NOT overlap any existing booking on
- * this specific room. Half-open: a guest checking out on the same day
- * another checks in is fine.
+ * True if `[checkIn, checkOut)` does NOT overlap any booking on this room
+ * inside the supplied `bookings` array. Half-open: a guest checking out on
+ * the same day another checks in is fine.
  */
 export function isRoomAvailable(
   roomId: string,
   checkIn: string,
-  checkOut: string
+  checkOut: string,
+  bookings: RoomBooking[]
 ): boolean {
-  return !roomBookings.some(
+  return !bookings.some(
     (b) =>
       b.roomId === roomId &&
       // overlap if requested checkIn < existing checkOut AND requested checkOut > existing checkIn
@@ -308,20 +309,25 @@ export function isRoomAvailable(
 export function findAvailableRoomForVariant(
   variantId: string,
   checkIn: string,
-  checkOut: string
+  checkOut: string,
+  bookings: RoomBooking[]
 ): IndividualRoom | null {
   const rooms = getRoomsForVariant(variantId);
-  return rooms.find((r) => isRoomAvailable(r.id, checkIn, checkOut)) ?? null;
+  return (
+    rooms.find((r) => isRoomAvailable(r.id, checkIn, checkOut, bookings)) ??
+    null
+  );
 }
 
 /** Count of un-booked rooms in a variant for the given date range. */
 export function countAvailableInVariant(
   variantId: string,
   checkIn: string,
-  checkOut: string
+  checkOut: string,
+  bookings: RoomBooking[]
 ): number {
   return getRoomsForVariant(variantId).filter((r) =>
-    isRoomAvailable(r.id, checkIn, checkOut)
+    isRoomAvailable(r.id, checkIn, checkOut, bookings)
   ).length;
 }
 

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { getCategoryById, roomCategories } from "@/lib/rooms-data";
+import { getBookingsForCategory } from "@/lib/bookings-db";
 import { RoomDetailContent } from "./_components/RoomDetailContent";
 
 /** Pre-build /hotel/rooms/standard, /deluxe, /suite × every locale at build time. */
@@ -10,6 +11,10 @@ export function generateStaticParams() {
     routing.locales.map((locale) => ({ locale, id: cat.id }))
   );
 }
+
+/** ISR: the static shell is regenerated at most every 30s so admin blocks
+ *  added in Supabase land on the public site without a redeploy. */
+export const revalidate = 30;
 
 export default async function RoomDetailPage({
   params,
@@ -22,5 +27,7 @@ export default async function RoomDetailPage({
   const category = getCategoryById(id);
   if (!category) notFound();
 
-  return <RoomDetailContent category={category} />;
+  const bookings = await getBookingsForCategory(category.id);
+
+  return <RoomDetailContent category={category} bookings={bookings} />;
 }

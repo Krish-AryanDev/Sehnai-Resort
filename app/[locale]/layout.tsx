@@ -10,6 +10,7 @@ import { CustomCursor } from "@/components/CustomCursor";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { IntroScreen } from "@/components/IntroScreen";
+import { Analytics } from "@/components/Analytics";
 
 export const metadata: Metadata = {
   title: "Shehnai Resort — Marriage Hall, Restaurant & Hotel",
@@ -36,6 +37,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <body>
+        <Analytics />
         <NextIntlClientProvider>
           <SmoothScroll />
           <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#07070d" }}>
