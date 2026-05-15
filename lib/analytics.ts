@@ -50,6 +50,28 @@ type EventMap = {
   call_clicked: BookingContext & {
     surface: "booking_summary" | "mobile_sticky";
   };
+
+  /* Payment funnel — added when the demo payment provider shipped.
+     These fire for any provider via lib/payment-provider's `PaymentProviderId`
+     so the same taxonomy works when Razorpay replaces the demo modal. */
+  payment_initiated: BookingContext & {
+    provider: "demo" | "razorpay";
+    order_id: string;
+  };
+  payment_succeeded: BookingContext & {
+    provider: "demo" | "razorpay";
+    order_id: string;
+    booking_id: string;
+  };
+  payment_failed: BookingContext & {
+    provider: "demo" | "razorpay";
+    order_id: string;
+    reason: string;
+  };
+  payment_dismissed: BookingContext & {
+    provider: "demo" | "razorpay";
+    order_id: string;
+  };
 };
 
 type EventName = keyof EventMap;

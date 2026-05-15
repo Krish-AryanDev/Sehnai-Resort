@@ -14,11 +14,20 @@ import {
   countAvailableInVariant,
 } from "@/lib/rooms-data";
 import { track, nightsBetween } from "@/lib/analytics";
+import type { PaymentOrder } from "@/lib/payment-provider";
+import { useRouter } from "@/i18n/navigation";
 import { RoomGallery } from "./RoomGallery";
 import { VariantSelector } from "./VariantSelector";
 import { BookingSummary } from "./BookingSummary";
 import { NoRefundDialog } from "./NoRefundDialog";
 import { StayStrip } from "./StayStrip";
+import { DemoPaymentModal } from "./DemoPaymentModal";
+import {
+  createPaymentOrder,
+  confirmPayment,
+  failPayment,
+  cancelPayment,
+} from "../_actions/payment";
 
 type RoomDetailContentProps = {
   category: RoomCategory;
@@ -91,6 +100,11 @@ export function RoomDetailContent({ category, bookings }: RoomDetailContentProps
 
   const [dialogOpen, setDialogOpen] = useState(false);
 
+  /* Payment flow state — null means no payment in progress. */
+  const [paymentOrder, setPaymentOrder] = useState<PaymentOrder | null>(null);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
+  const router = useRouter();
+
   /* Other categories — shown at the bottom of the page */
   const otherCategories = roomCategories.filter((c) => c.id !== category.id);
 
@@ -126,12 +140,16 @@ export function RoomDetailContent({ category, bookings }: RoomDetailContentProps
     setDialogOpen(false);
   };
 
-  /* Triggered by the modal's "I Understand — Continue" button.
-     For now we route to the phone dialer; this is the seam where the real
-     payment gateway will plug in next iteration. */
-  const handleConfirmBooking = () => {
+  /* Triggered by the no-refund modal's "I Understand — Continue" button.
+     Creates a pending booking via the active payment provider (today: demo;
+     soon: Razorpay), then opens the payment modal. The demo flow lives in
+     <DemoPaymentModal />; the Razorpay swap replaces that component +
+     swaps the body of createPaymentOrder/confirmPayment server actions. */
+  const handleConfirmBooking = async () => {
     if (!selectedVariant) return;
-    const room = findAvailableRoomForVariant(
+
+    // Optimistic guess for analytics — server may pick a different room.
+    const optimisticRoom = findAvailableRoomForVariant(
       selectedVariant.id,
       checkIn,
       checkOut,
@@ -139,10 +157,67 @@ export function RoomDetailContent({ category, bookings }: RoomDetailContentProps
     );
     track("modal_confirmed", {
       ...bookingContext(),
-      assigned_room_id: room?.id ?? null,
+      assigned_room_id: optimisticRoom?.id ?? null,
     });
     setDialogOpen(false);
-    window.location.href = siteLinks.tel;
+
+    const result = await createPaymentOrder({
+      categoryId: category.id,
+      variantId: selectedVariant.id,
+      checkIn,
+      checkOut,
+      guests,
+    });
+    if (!result.ok) {
+      setPaymentError(result.reason);
+      return;
+    }
+    setPaymentError(null);
+    setPaymentOrder(result.order);
+    track("payment_initiated", {
+      ...bookingContext(),
+      provider: result.order.provider,
+      order_id: result.order.orderId,
+    });
+  };
+
+  const handlePaymentSuccess = (_paymentId: string, orderId: string) => {
+    if (!paymentOrder) return;
+    track("payment_succeeded", {
+      ...bookingContext(),
+      provider: paymentOrder.provider,
+      order_id: orderId,
+      booking_id: paymentOrder.bookingId,
+    });
+    const bookingId = paymentOrder.bookingId;
+    // Clear modal state then navigate to the receipt page.
+    setPaymentOrder(null);
+    router.push(`/booking/${bookingId}`);
+  };
+
+  const handlePaymentFailure = async (reason: string, orderId: string) => {
+    if (!paymentOrder) return;
+    track("payment_failed", {
+      ...bookingContext(),
+      provider: paymentOrder.provider,
+      order_id: orderId,
+      reason,
+    });
+    // The DemoPaymentModal has already called failPayment server-side; this
+    // is the analytics + UI side. Leaving the modal open on its error
+    // screen so the user can retry.
+  };
+
+  const handlePaymentDismiss = async (orderId: string) => {
+    if (!paymentOrder) return;
+    track("payment_dismissed", {
+      ...bookingContext(),
+      provider: paymentOrder.provider,
+      order_id: orderId,
+    });
+    setPaymentOrder(null);
+    // Free the room hold on the server so the dates aren't stuck "pending".
+    await cancelPayment(orderId);
   };
 
   return (
@@ -572,6 +647,37 @@ export function RoomDetailContent({ category, bookings }: RoomDetailContentProps
           </button>
         </div>
       </div>
+
+      {/* ============= Demo payment modal ============= */}
+      <DemoPaymentModal
+        order={paymentOrder}
+        onSuccess={handlePaymentSuccess}
+        onFailure={handlePaymentFailure}
+        onDismiss={handlePaymentDismiss}
+        onConfirm={(orderId) => confirmPayment(orderId, { simulated: true })}
+        onFail={(orderId, reason) => failPayment(orderId, reason)}
+      />
+
+      {/* ============= Inline error from createPaymentOrder ============= */}
+      {paymentError && !paymentOrder && (
+        <div
+          className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50"
+          style={{
+            backgroundColor: "rgba(220,38,38,0.92)",
+            color: "#fff",
+            padding: "0.75rem 1.25rem",
+            border: "1px solid rgba(254,202,202,0.6)",
+            fontFamily: "'Inter', sans-serif",
+            fontSize: "0.8rem",
+            maxWidth: 360,
+            textAlign: "center",
+          }}
+          role="alert"
+          onClick={() => setPaymentError(null)}
+        >
+          {paymentError} (tap to dismiss)
+        </div>
+      )}
 
       {/* ============= No-refund confirmation modal ============= */}
       <NoRefundDialog

@@ -89,6 +89,42 @@ export default async function BookingDetailPage({
           <dd style={{ fontFamily: "ui-monospace, monospace", fontSize: 12 }}>
             {data.id}
           </dd>
+          {data.provider && (
+            <>
+              <dt>Provider</dt>
+              <dd>
+                {data.provider}
+                {data.provider === "demo" && (
+                  <span
+                    className="admin-pill"
+                    style={{
+                      marginLeft: 8,
+                      backgroundColor: "#fef3c7",
+                      color: "#854d0e",
+                    }}
+                  >
+                    demo
+                  </span>
+                )}
+              </dd>
+            </>
+          )}
+          {data.provider_order_id && (
+            <>
+              <dt>Order id</dt>
+              <dd style={{ fontFamily: "ui-monospace, monospace", fontSize: 12 }}>
+                {data.provider_order_id}
+              </dd>
+            </>
+          )}
+          {data.provider_payment_id && (
+            <>
+              <dt>Payment id</dt>
+              <dd style={{ fontFamily: "ui-monospace, monospace", fontSize: 12 }}>
+                {data.provider_payment_id}
+              </dd>
+            </>
+          )}
         </dl>
 
         {canCancel ? (
