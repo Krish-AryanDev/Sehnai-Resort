@@ -121,16 +121,17 @@ body {
 }
 
 /* Hide native cursor on desktop — replaced with <CustomCursor />.
-   Touch / coarse-pointer devices keep their native cursor. */
+   Touch / coarse-pointer devices keep their native cursor.
+   We explicitly exclude the admin section using :has() so native cursors return there. */
 @media (hover: hover) and (pointer: fine) {
-  html,
-  body,
-  a,
-  button,
-  [role="button"],
-  label,
-  img,
-  [data-cursor-hover] {
+  html:not(:has(.admin-root)),
+  body:not(:has(.admin-root)),
+  body:not(:has(.admin-root)) a,
+  body:not(:has(.admin-root)) button,
+  body:not(:has(.admin-root)) [role="button"],
+  body:not(:has(.admin-root)) label,
+  body:not(:has(.admin-root)) img,
+  body:not(:has(.admin-root)) [data-cursor-hover] {
     cursor: none;
   }
 
