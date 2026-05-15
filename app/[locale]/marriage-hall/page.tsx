@@ -62,7 +62,7 @@ export default function MarriageHallPage() {
             <FadeIn>
               <div className="relative">
                 <SmartImage
-                  src="https://images.unsplash.com/photo-1762216444919-043cf813e4de?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxvdXRkb29yJTIwd2VkZGluZyUyMHZlbnVlJTIwcmVjZXB0aW9uJTIwZ2FyZGVufGVufDF8fHx8MTc3ODUyMTcwN3ww&ixlib=rb-4.1.0&q=80&w=1080"
+                  src="/images/marriage-hall-entry-picture.jpeg"
                   alt="Wedding venue"
                   containerClassName="w-full"
                   containerStyle={{ aspectRatio: "4/3" }}
