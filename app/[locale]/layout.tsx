@@ -1,15 +1,10 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import "../globals.css";
 import { routing } from "@/i18n/routing";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
-import { CustomCursor } from "@/components/CustomCursor";
-import { SmoothScroll } from "@/components/SmoothScroll";
-import { WhatsAppButton } from "@/components/WhatsAppButton";
-import { IntroScreen } from "@/components/IntroScreen";
+import { PublicChrome } from "@/components/PublicChrome";
 import { Analytics } from "@/components/Analytics";
 
 export const metadata: Metadata = {
@@ -39,15 +34,7 @@ export default async function LocaleLayout({
       <body>
         <Analytics />
         <NextIntlClientProvider>
-          <SmoothScroll />
-          <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#07070d" }}>
-            <Navbar />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
-          <WhatsAppButton />
-          <CustomCursor />
-          <IntroScreen />
+          <PublicChrome>{children}</PublicChrome>
         </NextIntlClientProvider>
       </body>
     </html>

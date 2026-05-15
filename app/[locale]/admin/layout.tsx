@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import "./admin.css";
 import { AdminSidebar } from "./_components/AdminSidebar";
 import { getAdminUser } from "@/lib/admin-auth";
@@ -18,7 +20,15 @@ export default async function AdminLayout({
   return (
     <div className="admin-root">
       {user && <AdminSidebar userEmail={user.email ?? null} />}
-      <main className="admin-main">{children}</main>
+      <main className="admin-main">
+        {user && (
+          <Link href="/" className="admin-back-link">
+            <ArrowLeft size={14} />
+            <span>Back to home page</span>
+          </Link>
+        )}
+        {children}
+      </main>
     </div>
   );
 }

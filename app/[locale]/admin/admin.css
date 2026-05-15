@@ -175,6 +175,21 @@
   margin: 0 auto;
 }
 
+.admin-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 12px;
+  color: #78716c;
+  text-decoration: none;
+  margin-bottom: 1rem;
+  padding: 2px 0;
+  transition: color 0.12s ease;
+}
+.admin-back-link:hover {
+  color: #0f766e;
+}
+
 .admin-card {
   background: #fff;
   border: 1px solid #e7e5e4;
