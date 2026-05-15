@@ -12,7 +12,7 @@ export default async function AdminLoginPage({
   searchParams: Promise<SearchParams>;
 }) {
   const user = await getAdminUser();
-  if (user) redirect("/admin/bookings");
+  if (user) redirect("/admin");
 
   const { error, email } = await searchParams;
 

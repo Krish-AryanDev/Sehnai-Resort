@@ -46,5 +46,5 @@ export async function signInWithPassword(formData: FormData): Promise<never> {
     redirect(`/admin/login?${params.toString()}`);
   }
 
-  redirect("/admin/bookings");
+  redirect("/admin");
 }
