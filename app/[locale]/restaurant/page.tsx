@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { Clock, Users, Leaf, Wine, ArrowRight, Phone } from "lucide-react";
+import { Clock, Users, Leaf, Wine, ArrowRight, Phone, ShoppingBag } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { FadeIn } from "@/components/FadeIn";
 import { PageHero } from "@/components/PageHero";
@@ -56,14 +56,24 @@ export default function RestaurantPage() {
                 <p className="text-white/45 font-inter mb-8" style={{ fontFamily: "'Inter', sans-serif", fontSize: "0.9rem", lineHeight: 1.85, fontWeight: 300 }}>
                   Whether you&apos;re joining us for a leisurely lunch, a romantic dinner, or a private celebration, our team is dedicated to ensuring every visit exceeds your expectations.
                 </p>
-                <a
-                  href={siteLinks.tel}
-                  className="btn-premium flex items-center gap-3 bg-[#C9A84C] text-black hover:bg-[#dfc068] font-inter w-fit"
-                  style={{ fontFamily: "'Inter', sans-serif", fontSize: "0.72rem", letterSpacing: "0.22em", fontWeight: 600, textTransform: "uppercase", padding: "0.9rem 2rem" }}
-                >
-                  <Phone size={13} />
-                  Reserve a Table
-                </a>
+                <div className="flex flex-col sm:flex-row gap-3 w-fit">
+                  <Link
+                    href="/restaurant/order"
+                    className="btn-premium flex items-center gap-3 bg-[#C9A84C] text-black hover:bg-[#dfc068] font-inter"
+                    style={{ fontFamily: "'Inter', sans-serif", fontSize: "0.72rem", letterSpacing: "0.22em", fontWeight: 600, textTransform: "uppercase", padding: "0.9rem 2rem" }}
+                  >
+                    <ShoppingBag size={13} />
+                    Order Online
+                  </Link>
+                  <a
+                    href={siteLinks.tel}
+                    className="btn-premium-outline flex items-center gap-3 font-inter"
+                    style={{ fontFamily: "'Inter', sans-serif", fontSize: "0.72rem", letterSpacing: "0.22em", fontWeight: 600, textTransform: "uppercase", padding: "0.9rem 2rem", border: "1px solid rgba(201,168,76,0.6)", color: "#C9A84C", backgroundColor: "transparent" }}
+                  >
+                    <Phone size={13} />
+                    Reserve a Table
+                  </a>
+                </div>
               </div>
             </FadeIn>
 

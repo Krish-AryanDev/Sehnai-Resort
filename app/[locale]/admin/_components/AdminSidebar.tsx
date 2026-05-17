@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, ListChecks, CalendarDays } from "lucide-react";
+import { LayoutDashboard, ListChecks, CalendarDays, UtensilsCrossed } from "lucide-react";
 import type { ReactNode } from "react";
 import { AdminSignOutButton } from "./AdminSignOutButton";
 
@@ -34,6 +34,12 @@ const NAV_ITEMS: NavItem[] = [
     href: "/admin/calendar",
     label: "Calendar",
     icon: <CalendarDays size={16} />,
+    match: "prefix",
+  },
+  {
+    href: "/admin/menu",
+    label: "Menu",
+    icon: <UtensilsCrossed size={16} />,
     match: "prefix",
   },
 ];
