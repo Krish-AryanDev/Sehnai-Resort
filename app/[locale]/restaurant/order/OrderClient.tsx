@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { CartProvider } from "@/lib/cart-store";
 import { MenuItemCard, type MenuItemCardData } from "./_components/MenuItemCard";
 import { FilterBar, type FilterState } from "./_components/FilterBar";
 import { FloatingCartBar } from "./_components/FloatingCartBar";
@@ -16,16 +15,14 @@ export type OrderSection = {
   items: MenuItemCardData[];
 };
 
+/** CartProvider is mounted in /order/layout.tsx so the cart persists
+ *  across navigation to /order/checkout and /order/track/[id]. */
 export default function OrderClient({
   sections,
 }: {
   sections: OrderSection[];
 }) {
-  return (
-    <CartProvider>
-      <OrderShell sections={sections} />
-    </CartProvider>
-  );
+  return <OrderShell sections={sections} />;
 }
 
 function OrderShell({ sections }: { sections: OrderSection[] }) {

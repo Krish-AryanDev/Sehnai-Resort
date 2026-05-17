@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, ListChecks, CalendarDays, UtensilsCrossed } from "lucide-react";
+import {
+  LayoutDashboard,
+  ListChecks,
+  CalendarDays,
+  UtensilsCrossed,
+  ConciergeBell,
+  ChartLine,
+} from "lucide-react";
 import type { ReactNode } from "react";
 import { AdminSignOutButton } from "./AdminSignOutButton";
 
@@ -17,30 +24,59 @@ type NavItem = {
   match: "exact" | "prefix";
 };
 
-const NAV_ITEMS: NavItem[] = [
+type NavGroup = {
+  /** Section heading shown above the group on desktop. Hidden on mobile —
+   *  groups render as icon clusters separated by a divider instead. */
+  label: string;
+  items: NavItem[];
+};
+
+const NAV_GROUPS: NavGroup[] = [
   {
-    href: "/admin",
-    label: "Dashboard",
-    icon: <LayoutDashboard size={16} />,
-    match: "exact",
+    label: "Hotel",
+    items: [
+      {
+        href: "/admin",
+        label: "Dashboard",
+        icon: <LayoutDashboard size={16} />,
+        match: "exact",
+      },
+      {
+        href: "/admin/bookings",
+        label: "Bookings",
+        icon: <ListChecks size={16} />,
+        match: "prefix",
+      },
+      {
+        href: "/admin/calendar",
+        label: "Calendar",
+        icon: <CalendarDays size={16} />,
+        match: "prefix",
+      },
+    ],
   },
   {
-    href: "/admin/bookings",
-    label: "Bookings",
-    icon: <ListChecks size={16} />,
-    match: "prefix",
-  },
-  {
-    href: "/admin/calendar",
-    label: "Calendar",
-    icon: <CalendarDays size={16} />,
-    match: "prefix",
-  },
-  {
-    href: "/admin/menu",
-    label: "Menu",
-    icon: <UtensilsCrossed size={16} />,
-    match: "prefix",
+    label: "Restaurant",
+    items: [
+      {
+        href: "/admin/restaurant",
+        label: "Overview",
+        icon: <ChartLine size={16} />,
+        match: "prefix",
+      },
+      {
+        href: "/admin/orders",
+        label: "Orders",
+        icon: <ConciergeBell size={16} />,
+        match: "prefix",
+      },
+      {
+        href: "/admin/menu",
+        label: "Menu",
+        icon: <UtensilsCrossed size={16} />,
+        match: "prefix",
+      },
+    ],
   },
 ];
 
@@ -53,9 +89,6 @@ function normalizePath(p: string): string {
 function isActive(pathname: string, item: NavItem): boolean {
   const path = normalizePath(pathname);
   if (item.match === "exact") return path === item.href;
-  // prefix: match self or any nested child, but a more-specific sibling
-  // (e.g. "/admin/bookings/new") takes precedence and is handled by
-  // checking exact matches first in the caller below.
   return path === item.href || path.startsWith(item.href + "/");
 }
 
@@ -66,40 +99,61 @@ export function AdminSidebar({
 }) {
   const pathname = usePathname() ?? "/";
 
-  // Compute active item with precedence: exact matches beat prefix matches,
-  // so /admin/bookings/new highlights "New block" not "Bookings".
-  let activeIndex = -1;
-  for (let i = 0; i < NAV_ITEMS.length; i++) {
-    if (NAV_ITEMS[i].match === "exact" && isActive(pathname, NAV_ITEMS[i])) {
-      activeIndex = i;
+  // Flatten to compute active item once; exact matches beat prefix matches so
+  // /admin/bookings/new highlights the right row instead of falling back to
+  // the dashboard via its exact match on "/admin".
+  const flat = NAV_GROUPS.flatMap((g) => g.items);
+  let activeHref: string | null = null;
+  for (const it of flat) {
+    if (it.match === "exact" && isActive(pathname, it)) {
+      activeHref = it.href;
       break;
     }
   }
-  if (activeIndex === -1) {
-    activeIndex = NAV_ITEMS.findIndex((it) => isActive(pathname, it));
+  if (!activeHref) {
+    const fallback = flat.find((it) => isActive(pathname, it));
+    activeHref = fallback?.href ?? null;
   }
 
   return (
     <aside className="admin-sidebar">
       <div className="admin-sidebar-brand">
-        <span className="admin-sidebar-brand-mark" aria-hidden>SR</span>
+        <span className="admin-sidebar-brand-mark" aria-hidden>
+          SR
+        </span>
         <span className="admin-sidebar-brand-text">Shehnai · Admin</span>
       </div>
 
       <nav className="admin-sidebar-nav" aria-label="Admin sections">
-        {NAV_ITEMS.map((item, i) => (
-          <Link
-            key={item.href + ":" + item.label}
-            href={item.href}
-            className={
-              "admin-sidebar-link" +
-              (i === activeIndex ? " admin-sidebar-link--active" : "")
-            }
-            aria-current={i === activeIndex ? "page" : undefined}
+        {NAV_GROUPS.map((group) => (
+          <div
+            key={group.label}
+            className="admin-sidebar-group"
+            role="group"
+            aria-label={group.label}
           >
-            <span className="admin-sidebar-link-icon">{item.icon}</span>
-            <span className="admin-sidebar-link-label">{item.label}</span>
-          </Link>
+            <h3 className="admin-sidebar-group-label">{group.label}</h3>
+            {group.items.map((item) => {
+              const active = item.href === activeHref;
+              return (
+                <Link
+                  key={item.href + ":" + item.label}
+                  href={item.href}
+                  className={
+                    "admin-sidebar-link" +
+                    (active ? " admin-sidebar-link--active" : "")
+                  }
+                  aria-current={active ? "page" : undefined}
+                  title={item.label}
+                >
+                  <span className="admin-sidebar-link-icon">{item.icon}</span>
+                  <span className="admin-sidebar-link-label">
+                    {item.label}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
         ))}
       </nav>
 

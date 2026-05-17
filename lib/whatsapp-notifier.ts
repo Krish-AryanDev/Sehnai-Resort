@@ -152,6 +152,86 @@ async function cloudApiProvider(
 /* Message formatter                                                  */
 /* ------------------------------------------------------------------ */
 
+/** Pretty-print a food-order confirmation for the admin's WhatsApp. Fires
+ *  on order placement. Phase 4 only sends to admin; customer pings on
+ *  status changes land in Phase 6 alongside realtime tracking. */
+export function formatOrderConfirmationMessage(args: {
+  shortCode: string;
+  fulfillment: "in_room" | "takeaway" | "delivery";
+  paymentMode: "online" | "cod";
+  paymentStatus: "pending" | "paid" | "failed" | "refunded";
+  items: { name: string; variant: "single" | "half" | "full"; qty: number }[];
+  subtotalPaise: number;
+  deliveryFeePaise: number;
+  taxPaise: number;
+  totalPaise: number;
+  customerName: string;
+  customerPhone: string;
+  roomNumber: string | null;
+  addressLine: string | null;
+  addressLandmark: string | null;
+  addressPincode: string | null;
+  pickupTime: string | null;
+  notes: string | null;
+  adminUrl: string | null;
+}): string {
+  const inr = (paise: number) =>
+    `₹${(paise / 100).toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
+  const fulfillmentLabel: Record<typeof args.fulfillment, string> = {
+    in_room: "In-room",
+    takeaway: "Takeaway",
+    delivery: "Delivery",
+  };
+  const variantLabel = (v: "single" | "half" | "full") =>
+    v === "single" ? "" : v === "half" ? " (Half)" : " (Full)";
+
+  const lines = [
+    `New food order — ${args.shortCode}`,
+    `${fulfillmentLabel[args.fulfillment]} · ${args.paymentMode.toUpperCase()} · ${args.paymentStatus}`,
+    "",
+    "Items:",
+    ...args.items.map(
+      (i) => `  ${i.qty}× ${i.name}${variantLabel(i.variant)}`
+    ),
+    "",
+    `Subtotal: ${inr(args.subtotalPaise)}`,
+  ];
+
+  if (args.deliveryFeePaise > 0) {
+    lines.push(`Delivery:  ${inr(args.deliveryFeePaise)}`);
+  }
+  if (args.taxPaise > 0) {
+    lines.push(`GST:       ${inr(args.taxPaise)}`);
+  }
+  lines.push(`Total:     ${inr(args.totalPaise)}`);
+
+  lines.push("");
+  lines.push("Customer:");
+  lines.push(`  Name:  ${args.customerName}`);
+  lines.push(`  Phone: ${args.customerPhone}`);
+
+  if (args.fulfillment === "in_room" && args.roomNumber) {
+    lines.push(`  Room:  ${args.roomNumber}`);
+  }
+  if (args.fulfillment === "delivery") {
+    if (args.addressLine) lines.push(`  Address: ${args.addressLine}`);
+    if (args.addressLandmark) lines.push(`  Landmark: ${args.addressLandmark}`);
+    if (args.addressPincode) lines.push(`  PIN: ${args.addressPincode}`);
+  }
+  if (args.fulfillment === "takeaway" && args.pickupTime) {
+    lines.push(`  Pickup: ${args.pickupTime}`);
+  }
+  if (args.notes) {
+    lines.push("");
+    lines.push(`Notes: ${args.notes}`);
+  }
+  if (args.adminUrl) {
+    lines.push("");
+    lines.push(args.adminUrl);
+  }
+  return lines.join("\n");
+}
+
 /** Pretty-print a booking confirmation for the admin's WhatsApp. */
 export function formatBookingConfirmationMessage(args: {
   bookingId: string;

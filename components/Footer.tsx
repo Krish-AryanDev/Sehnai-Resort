@@ -210,6 +210,45 @@ export function Footer() {
           ))}
         </div>
       </div>
+
+      <div
+        style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}
+        className="max-w-7xl mx-auto px-6 md:px-10 py-4 flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4"
+      >
+        <span
+          className="text-white/35 font-inter"
+          style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: "0.7rem",
+            letterSpacing: "0.06em",
+          }}
+        >
+          Developed by{" "}
+          <a
+            href="https://portfolio-fullstack-lovat.vercel.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:underline transition-colors duration-200"
+            style={{ color: "#C9A84C", fontWeight: 500 }}
+          >
+            Krish Aryan
+          </a>
+        </span>
+        <span className="hidden md:inline text-white/15" aria-hidden>
+          ·
+        </span>
+        <a
+          href="tel:+919031350700"
+          className="text-white/35 hover:text-[#C9A84C] font-inter transition-colors duration-200"
+          style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: "0.7rem",
+            letterSpacing: "0.06em",
+          }}
+        >
+          Contact: +91 90313 50700
+        </a>
+      </div>
     </footer>
   );
 }

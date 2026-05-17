@@ -3,6 +3,7 @@
 import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect } from "react";
+import { Link } from "@/i18n/navigation";
 import { useCart, type CartItem } from "@/lib/cart-store";
 import { VegDot } from "./VegDot";
 
@@ -334,11 +335,11 @@ export function CartSheet({
                   Delivery fees, taxes & fulfillment options at checkout.
                 </p>
 
-                <button
-                  type="button"
-                  disabled
-                  title="Checkout opens in the next phase"
+                <Link
+                  href="/restaurant/order/checkout"
+                  onClick={onClose}
                   style={{
+                    display: "block",
                     width: "100%",
                     padding: "0.95rem",
                     backgroundColor: "#C9A84C",
@@ -348,12 +349,11 @@ export function CartSheet({
                     letterSpacing: "0.22em",
                     textTransform: "uppercase",
                     fontWeight: 700,
-                    cursor: "not-allowed",
-                    opacity: 0.55,
+                    textAlign: "center",
                   }}
                 >
-                  Proceed to checkout — coming soon
-                </button>
+                  Proceed to checkout
+                </Link>
 
                 <button
                   type="button"

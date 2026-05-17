@@ -61,6 +61,23 @@
   gap: 2px;
   overflow-y: auto;
 }
+.admin-sidebar-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.admin-sidebar-group + .admin-sidebar-group {
+  margin-top: 0.85rem;
+}
+.admin-sidebar-group-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #a8a29e;
+  margin: 0 0 0.25rem;
+  padding: 0 0.75rem;
+}
 .admin-sidebar-link {
   display: flex;
   align-items: center;
@@ -145,6 +162,19 @@
     padding: 0.4rem 0.4rem;
     overflow-x: auto;
     gap: 4px;
+  }
+  .admin-sidebar-group {
+    flex-direction: row;
+    gap: 2px;
+  }
+  .admin-sidebar-group + .admin-sidebar-group {
+    margin-top: 0;
+    margin-left: 0.5rem;
+    padding-left: 0.5rem;
+    border-left: 1px solid #e7e5e4;
+  }
+  .admin-sidebar-group-label {
+    display: none;
   }
   .admin-sidebar-link {
     padding: 0.45rem 0.6rem;

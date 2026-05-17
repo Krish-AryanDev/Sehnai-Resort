@@ -34,7 +34,7 @@ export function WhatsAppButton() {
       initial={{ opacity: 0, y: 24, scale: 0.85 }}
       animate={mounted ? { opacity: 1, y: 0, scale: 1 } : undefined}
       transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className="fixed bottom-5 right-5 md:bottom-7 md:right-7 z-[60]"
+      className="fixed bottom-5 right-5 md:bottom-7 md:right-7 z-60"
       style={{
         paddingBottom: "env(safe-area-inset-bottom)",
         paddingRight: "env(safe-area-inset-right)",
