@@ -1,12 +1,22 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { ArrowLeft, Building2, Bike, ShoppingBag, MapPin, CircleCheck, CircleAlert, Loader2 } from "lucide-react";
+import { ArrowLeft, Building2, Bike, ShoppingBag, MapPin, CircleCheck, CircleAlert, Loader2, CreditCard, Wallet } from "lucide-react";
 import { Link, useRouter } from "@/i18n/navigation";
 import { useCart } from "@/lib/cart-store";
 import { haversineKm } from "@/lib/delivery-distance";
 import type { Fulfillment } from "@/lib/order-mutations";
+import type { FoodPaymentOrder } from "@/lib/payment-provider";
+import { DemoPaymentModal } from "@/components/DemoPaymentModal";
 import { placeCodOrder } from "../_actions/place-order";
+import {
+  createOnlinePaymentOrder,
+  confirmOnlinePayment,
+  failOnlinePayment,
+  cancelOnlinePayment,
+} from "../_actions/online-payment";
+
+type PaymentMode = "online" | "cod";
 
 type CheckoutSettings = {
   deliveryEnabled: boolean;
@@ -41,6 +51,7 @@ export function CheckoutClient({ settings }: { settings: CheckoutSettings }) {
   const [fulfillment, setFulfillment] = useState<Fulfillment>(
     settings.deliveryEnabled ? "in_room" : "in_room"
   );
+  const [paymentMode, setPaymentMode] = useState<PaymentMode>("online");
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
@@ -51,6 +62,10 @@ export function CheckoutClient({ settings }: { settings: CheckoutSettings }) {
   const [pickupTime, setPickupTime] = useState("");
   const [notes, setNotes] = useState("");
   const [geo, setGeo] = useState<GeoState>({ kind: "idle" });
+
+  /** Holds the FoodPaymentOrder once the user submits the online flow.
+   *  Null when no payment is in progress. Drives the <DemoPaymentModal />. */
+  const [paymentOrder, setPaymentOrder] = useState<FoodPaymentOrder | null>(null);
 
   // ---- Derived totals (display only — server is authoritative) ----
   const subtotalPaise = cart.totalPaise;
@@ -127,38 +142,77 @@ export function CheckoutClient({ settings }: { settings: CheckoutSettings }) {
     const deliveryLat = geo.kind === "ok" ? geo.lat : null;
     const deliveryLng = geo.kind === "ok" ? geo.lng : null;
 
-    startTransition(async () => {
-      const result = await placeCodOrder({
-        fulfillment,
-        customerName,
-        customerPhone,
-        customerEmail: customerEmail.trim() ? customerEmail : null,
-        roomNumber: fulfillment === "in_room" ? roomNumber : null,
-        addressLine: fulfillment === "delivery" ? addressLine : null,
-        addressLandmark: fulfillment === "delivery" ? addressLandmark : null,
-        addressPincode: fulfillment === "delivery" ? addressPincode : null,
-        deliveryLat: fulfillment === "delivery" ? deliveryLat : null,
-        deliveryLng: fulfillment === "delivery" ? deliveryLng : null,
-        pickupTime: fulfillment === "takeaway" && pickupTime ? pickupTime : null,
-        notes: notes.trim() ? notes : null,
-        cart: cart.items.map((it) => ({
-          menuItemId: it.menuItemId,
-          variant: it.variant,
-          qty: it.qty,
-        })),
-      });
+    const sharedInput = {
+      fulfillment,
+      customerName,
+      customerPhone,
+      customerEmail: customerEmail.trim() ? customerEmail : null,
+      roomNumber: fulfillment === "in_room" ? roomNumber : null,
+      addressLine: fulfillment === "delivery" ? addressLine : null,
+      addressLandmark: fulfillment === "delivery" ? addressLandmark : null,
+      addressPincode: fulfillment === "delivery" ? addressPincode : null,
+      deliveryLat: fulfillment === "delivery" ? deliveryLat : null,
+      deliveryLng: fulfillment === "delivery" ? deliveryLng : null,
+      pickupTime: fulfillment === "takeaway" && pickupTime ? pickupTime : null,
+      notes: notes.trim() ? notes : null,
+      cart: cart.items.map((it) => ({
+        menuItemId: it.menuItemId,
+        variant: it.variant,
+        qty: it.qty,
+      })),
+    };
 
+    startTransition(async () => {
+      if (paymentMode === "cod") {
+        const result = await placeCodOrder(sharedInput);
+        if (!result.ok) {
+          setError(result.reason);
+          return;
+        }
+        // Wipe the cart before navigating so the storefront doesn't
+        // re-show items the customer just placed.
+        cart.clear();
+        router.push(`/restaurant/order/track/${result.orderId}`);
+        return;
+      }
+
+      // Online: mint the provider order and open the demo modal. The order
+      // exists in the DB as 'placed' with payment_status='pending' from
+      // this point — confirmOnlinePayment flips it to 'paid' once the user
+      // pays inside the modal. Dismiss / failure cancels it.
+      const result = await createOnlinePaymentOrder(sharedInput);
       if (!result.ok) {
         setError(result.reason);
         return;
       }
-
-      // Success — wipe the cart before navigating so the order page doesn't
-      // re-show items the customer just placed.
-      cart.clear();
-      router.push(`/restaurant/order/track/${result.orderId}`);
+      setPaymentOrder(result.order);
     });
   }
+
+  /** Modal "Pay" succeeded. Clear cart and route to the customer tracking
+   *  page — the order is now paid + placed. */
+  const handlePaymentSuccess = () => {
+    if (!paymentOrder) return;
+    const foodOrderId = paymentOrder.foodOrderId;
+    setPaymentOrder(null);
+    cart.clear();
+    router.push(`/restaurant/order/track/${foodOrderId}`);
+  };
+
+  /** Modal hit a server-side failure. We leave the modal open on its error
+   *  screen so the user can read the reason and close; cancelOnlinePayment
+   *  has already been called by failOnlinePayment under the hood. */
+  const handlePaymentFailure = (_reason: string, _orderId: string) => {
+    // No-op — modal handles the error screen itself.
+  };
+
+  /** User closed the modal without paying. Cancel the pending order so it
+   *  doesn't sit forever, then re-open the checkout form (cart still has
+   *  the items — they can retry or switch to COD). */
+  const handlePaymentDismiss = async (orderId: string) => {
+    setPaymentOrder(null);
+    await cancelOnlinePayment(orderId);
+  };
 
   // ---- Hydration / empty cart guard ----
   if (!cart.hydrated) {
@@ -251,7 +305,7 @@ export function CheckoutClient({ settings }: { settings: CheckoutSettings }) {
                 marginTop: "0.4rem",
               }}
             >
-              Pay on delivery / pickup. Card &amp; UPI checkout coming soon.
+              Pay online, or pay when your order arrives.
             </p>
           </div>
         </div>
@@ -442,6 +496,40 @@ export function CheckoutClient({ settings }: { settings: CheckoutSettings }) {
                 </section>
               )}
 
+              {/* Payment mode */}
+              <section style={cardStyle}>
+                <h2 style={sectionTitleStyle}>Payment</h2>
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(2, 1fr)",
+                    gap: 8,
+                    marginTop: "0.8rem",
+                  }}
+                >
+                  <PaymentTile
+                    active={paymentMode === "online"}
+                    onClick={() => setPaymentMode("online")}
+                    icon={<CreditCard size={18} />}
+                    label="Pay online"
+                    sub="Card · UPI · Wallet"
+                  />
+                  <PaymentTile
+                    active={paymentMode === "cod"}
+                    onClick={() => setPaymentMode("cod")}
+                    icon={<Wallet size={18} />}
+                    label={
+                      fulfillment === "delivery"
+                        ? "Pay on delivery"
+                        : fulfillment === "in_room"
+                        ? "Pay at room"
+                        : "Pay at pickup"
+                    }
+                    sub="Cash / UPI to staff"
+                  />
+                </div>
+              </section>
+
               {/* Notes */}
               <section style={cardStyle}>
                 <h2 style={sectionTitleStyle}>
@@ -536,7 +624,13 @@ export function CheckoutClient({ settings }: { settings: CheckoutSettings }) {
                   textAlign: "center",
                 }}
               >
-                Pay on delivery / pickup
+                {paymentMode === "online"
+                  ? "Pay online · Card / UPI / Wallet"
+                  : fulfillment === "delivery"
+                  ? "Pay on delivery"
+                  : fulfillment === "in_room"
+                  ? "Pay at room"
+                  : "Pay at pickup"}
               </div>
 
               {error && (
@@ -579,12 +673,31 @@ export function CheckoutClient({ settings }: { settings: CheckoutSettings }) {
                 }}
               >
                 {pending && <Loader2 size={14} className="animate-spin" />}
-                {pending ? "Placing order…" : "Place order"}
+                {pending
+                  ? paymentMode === "online"
+                    ? "Opening payment…"
+                    : "Placing order…"
+                  : paymentMode === "online"
+                  ? `Pay ${INR(totalPaise)}`
+                  : "Place order"}
               </button>
             </aside>
           </div>
         </div>
       </form>
+
+      {/* Online-payment modal — only mounted when paymentOrder is set. */}
+      <DemoPaymentModal
+        order={paymentOrder}
+        onSuccess={handlePaymentSuccess}
+        onFailure={handlePaymentFailure}
+        onDismiss={handlePaymentDismiss}
+        onConfirm={async (orderId) => {
+          const r = await confirmOnlinePayment(orderId, { simulated: true });
+          return r.ok ? { ok: true, id: r.orderId } : r;
+        }}
+        onFail={(orderId, reason) => failOnlinePayment(orderId, reason)}
+      />
     </div>
   );
 }
@@ -592,6 +705,66 @@ export function CheckoutClient({ settings }: { settings: CheckoutSettings }) {
 /* =================================================================== */
 /* Subcomponents                                                       */
 /* =================================================================== */
+
+function PaymentTile({
+  active,
+  onClick,
+  icon,
+  label,
+  sub,
+}: {
+  active: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+  label: string;
+  sub: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        gap: 6,
+        padding: "0.85rem",
+        backgroundColor: active ? "rgba(201,168,76,0.12)" : "transparent",
+        border: `1px solid ${active ? "#C9A84C" : "rgba(255,255,255,0.08)"}`,
+        color: active ? "#C9A84C" : "rgba(255,255,255,0.7)",
+        cursor: "pointer",
+        textAlign: "left",
+        transition: "background-color 0.15s, border-color 0.15s, color 0.15s",
+      }}
+    >
+      <span style={{ color: active ? "#C9A84C" : "rgba(255,255,255,0.55)" }}>
+        {icon}
+      </span>
+      <span
+        style={{
+          fontFamily: "'Inter', sans-serif",
+          fontSize: "0.78rem",
+          fontWeight: 700,
+          letterSpacing: "0.08em",
+          textTransform: "uppercase",
+        }}
+      >
+        {label}
+      </span>
+      <span
+        style={{
+          fontFamily: "'Cormorant Garamond', serif",
+          fontStyle: "italic",
+          fontSize: "0.85rem",
+          color: "rgba(255,255,255,0.45)",
+        }}
+      >
+        {sub}
+      </span>
+    </button>
+  );
+}
 
 function FulfillmentTile({
   active,

@@ -10,6 +10,7 @@ import {
   updateOrderStatus,
   type OrderStatus,
 } from "@/lib/order-mutations";
+import { sendCustomerStatusNotification } from "@/lib/order-notify";
 
 /**
  * Kitchen-side actions for /admin/orders/[id]. All gated by requireAdmin.
@@ -19,10 +20,10 @@ import {
  * refresh shows the new step). The order detail page itself is
  * force-dynamic so it'll re-render with the new status on the redirect.
  *
- * Phase 6 will replace this thin shim with a kitchen view that drives the
- * same `updateOrderStatus` over a Supabase Realtime channel + per-status
- * tabs. The core mutations live in /lib/order-mutations.ts so that swap
- * is purely a UI change.
+ * Phase 6: customer WhatsApp pings fire fire-and-log on every successful
+ * advance and cancel. Realtime updates on the customer's tracking page
+ * piggyback on `revalidatePath` since that page subscribes to the row's
+ * `postgres_changes` and calls `router.refresh()` on each update.
  */
 
 function str(fd: FormData, key: string): string {
@@ -59,6 +60,9 @@ export async function advanceOrderStatusAction(formData: FormData) {
   }
 
   bustOrderCaches(orderId);
+  // Fire-and-log customer WhatsApp ping. The formatter skips
+  // out_for_delivery for non-delivery orders and skips 'placed' entirely.
+  notifyCustomerSafe(orderId);
   backToDetail(orderId, `status-${next}`);
 }
 
@@ -73,7 +77,21 @@ export async function cancelOrderAction(formData: FormData) {
     failToDetail(orderId, result.reason);
   }
   bustOrderCaches(orderId);
+  notifyCustomerSafe(orderId);
   backToDetail(orderId, "cancelled");
+}
+
+/** Fire-and-log wrapper around the customer status helper. Detached from
+ *  the awaited path so a slow / failing WhatsApp endpoint never blocks
+ *  the kitchen UI from redirecting back to the order detail page. */
+function notifyCustomerSafe(orderId: string): void {
+  sendCustomerStatusNotification(orderId).catch((err) => {
+    // eslint-disable-next-line no-console
+    console.warn(
+      "[whatsapp] customer status notification threw:",
+      err instanceof Error ? err.message : String(err)
+    );
+  });
 }
 
 export async function markCodPaidAction(formData: FormData) {

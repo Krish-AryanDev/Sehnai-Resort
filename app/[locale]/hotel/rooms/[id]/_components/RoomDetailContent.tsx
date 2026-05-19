@@ -21,7 +21,7 @@ import { VariantSelector } from "./VariantSelector";
 import { BookingSummary } from "./BookingSummary";
 import { NoRefundDialog } from "./NoRefundDialog";
 import { StayStrip } from "./StayStrip";
-import { DemoPaymentModal } from "./DemoPaymentModal";
+import { DemoPaymentModal } from "@/components/DemoPaymentModal";
 import {
   createPaymentOrder,
   confirmPayment,
@@ -182,7 +182,7 @@ export function RoomDetailContent({ category, bookings }: RoomDetailContentProps
   };
 
   const handlePaymentSuccess = (_paymentId: string, orderId: string) => {
-    if (!paymentOrder) return;
+    if (!paymentOrder || paymentOrder.kind !== "room") return;
     track("payment_succeeded", {
       ...bookingContext(),
       provider: paymentOrder.provider,
@@ -654,7 +654,10 @@ export function RoomDetailContent({ category, bookings }: RoomDetailContentProps
         onSuccess={handlePaymentSuccess}
         onFailure={handlePaymentFailure}
         onDismiss={handlePaymentDismiss}
-        onConfirm={(orderId) => confirmPayment(orderId, { simulated: true })}
+        onConfirm={async (orderId) => {
+          const r = await confirmPayment(orderId, { simulated: true });
+          return r.ok ? { ok: true, id: r.bookingId } : r;
+        }}
         onFail={(orderId, reason) => failPayment(orderId, reason)}
       />
 

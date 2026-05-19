@@ -79,6 +79,7 @@ export function CustomCursor() {
             marginLeft: -18,
             marginTop: -18,
             borderColor: "#C9A84C",
+            borderWidth: 1,
           }}
           animate={{
             scale: hovering ? 1.7 : 1,

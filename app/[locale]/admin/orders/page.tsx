@@ -1,6 +1,7 @@
 import { requireAdmin } from "@/lib/admin-auth";
 import { listOrdersForAdmin } from "@/lib/order-repo";
 import { OrdersList } from "./_components/OrdersList";
+import { OrdersLive } from "./_components/OrdersLive";
 
 export const dynamic = "force-dynamic";
 
@@ -10,6 +11,7 @@ export default async function AdminOrdersPage() {
 
   return (
     <div>
+      <OrdersLive />
       <div className="admin-toolbar">
         <h1 className="admin-h1" style={{ marginBottom: 0 }}>
           Orders

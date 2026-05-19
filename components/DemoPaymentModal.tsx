@@ -12,9 +12,11 @@ type DemoPaymentModalProps = {
   onSuccess: (paymentId: string, orderId: string) => void;
   onFailure: (reason: string, orderId: string) => void;
   onDismiss: (orderId: string) => void;
-  /** Server actions injected by the parent so this stays UI-only. */
+  /** Server actions injected by the parent so this stays UI-only.
+   *  `id` is the caller's internal record id (booking id for room flow,
+   *  order id for food flow). */
   onConfirm: (orderId: string) => Promise<
-    { ok: true; bookingId: string } | { ok: false; reason: string }
+    { ok: true; id: string } | { ok: false; reason: string }
   >;
   onFail: (
     orderId: string,
@@ -25,7 +27,7 @@ type DemoPaymentModalProps = {
 type ScreenState =
   | { kind: "form" }
   | { kind: "processing" }
-  | { kind: "done"; bookingId: string }
+  | { kind: "done" }
   | { kind: "error"; message: string };
 
 /**
@@ -37,6 +39,9 @@ type ScreenState =
  * confuse it for production. When the real Razorpay flow lands, this
  * component is replaced by an opener that launches Razorpay's hosted
  * checkout — the parent props above don't need to change.
+ *
+ * The summary section branches on `order.kind` so both the room-booking
+ * and food-ordering flows can share the same modal shell.
  */
 export function DemoPaymentModal({
   order,
@@ -91,7 +96,7 @@ export function DemoPaymentModal({
       await new Promise((r) => setTimeout(r, 900));
       const result = await onConfirm(order.orderId);
       if (result.ok) {
-        setScreen({ kind: "done", bookingId: result.bookingId });
+        setScreen({ kind: "done" });
         // Brief success animation before the parent navigates away.
         setTimeout(() => onSuccess(`demo_pay_for_${order.orderId}`, order.orderId), 800);
       } else {
@@ -144,6 +149,8 @@ export function DemoPaymentModal({
               backgroundColor: "#0d0d16",
               border: "1px solid rgba(201,168,76,0.35)",
               boxShadow: "0 24px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(201,168,76,0.12)",
+              maxHeight: "92vh",
+              overflowY: "auto",
             }}
           >
             {/* Demo banner — explicit, hard to miss */}
@@ -240,6 +247,10 @@ export function DemoPaymentModal({
   );
 }
 
+/* =================================================================== */
+/* Summary — branches per PaymentOrder kind                            */
+/* =================================================================== */
+
 function OrderSummary({ order }: { order: PaymentOrder }) {
   return (
     <div
@@ -249,12 +260,11 @@ function OrderSummary({ order }: { order: PaymentOrder }) {
         border: "1px solid rgba(255,255,255,0.06)",
       }}
     >
-      <Row label="Room" value={order.booking.variantName} />
-      <Row
-        label="Stay"
-        value={`${order.booking.checkIn} → ${order.booking.checkOut} (${order.booking.nights} night${order.booking.nights === 1 ? "" : "s"})`}
-      />
-      <Row label="Guests" value={String(order.booking.guests)} />
+      {order.kind === "room" ? (
+        <RoomSummaryRows order={order} />
+      ) : (
+        <FoodSummaryRows order={order} />
+      )}
       <div
         style={{
           marginTop: 10,
@@ -290,6 +300,98 @@ function OrderSummary({ order }: { order: PaymentOrder }) {
   );
 }
 
+function RoomSummaryRows({ order }: { order: Extract<PaymentOrder, { kind: "room" }> }) {
+  return (
+    <>
+      <Row label="Room" value={order.booking.variantName} />
+      <Row
+        label="Stay"
+        value={`${order.booking.checkIn} → ${order.booking.checkOut} (${order.booking.nights} night${order.booking.nights === 1 ? "" : "s"})`}
+      />
+      <Row label="Guests" value={String(order.booking.guests)} />
+    </>
+  );
+}
+
+const FULFILLMENT_LABEL: Record<
+  Extract<PaymentOrder, { kind: "food" }>["food"]["fulfillment"],
+  string
+> = {
+  in_room: "In-room dining",
+  takeaway: "Takeaway",
+  delivery: "Home delivery",
+};
+
+function FoodSummaryRows({ order }: { order: Extract<PaymentOrder, { kind: "food" }> }) {
+  return (
+    <>
+      <Row label="Receipt" value={order.food.shortCode} />
+      <Row label="Mode" value={FULFILLMENT_LABEL[order.food.fulfillment]} />
+      <div style={{ marginTop: 8 }}>
+        <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+          {order.food.items.map((it, idx) => (
+            <li
+              key={`${it.name}-${it.variant}-${idx}`}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: 10,
+                padding: "3px 0",
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: "0.75rem",
+                  color: "rgba(255,255,255,0.82)",
+                }}
+              >
+                <span style={{ color: "#C9A84C", marginRight: 6 }}>{it.qty}×</span>
+                {it.name}
+                {it.variant !== "single" && (
+                  <span style={{ color: "rgba(255,255,255,0.45)", marginLeft: 4 }}>
+                    ({it.variant})
+                  </span>
+                )}
+              </span>
+              <span
+                style={{
+                  fontFamily: "'Playfair Display', serif",
+                  fontSize: "0.78rem",
+                  color: "#fff",
+                  fontVariantNumeric: "tabular-nums",
+                  flexShrink: 0,
+                }}
+              >
+                ₹{(it.lineTotalPaise / 100).toLocaleString("en-IN")}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div
+        style={{
+          marginTop: 8,
+          paddingTop: 8,
+          borderTop: "1px dashed rgba(255,255,255,0.07)",
+        }}
+      >
+        <MiniRow label="Subtotal" value={inr(order.food.subtotalPaise)} />
+        {order.food.deliveryFeePaise > 0 && (
+          <MiniRow label="Delivery" value={inr(order.food.deliveryFeePaise)} />
+        )}
+        {order.food.taxPaise > 0 && (
+          <MiniRow label="GST" value={inr(order.food.taxPaise)} />
+        )}
+      </div>
+    </>
+  );
+}
+
+function inr(paise: number): string {
+  return `₹${(paise / 100).toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
+}
+
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-baseline justify-between" style={{ marginBottom: 4 }}>
@@ -310,6 +412,40 @@ function Row({ label, value }: { label: string; value: string }) {
           fontFamily: "'Inter', sans-serif",
           fontSize: "0.82rem",
           textAlign: "right",
+        }}
+      >
+        {value}
+      </span>
+    </div>
+  );
+}
+
+function MiniRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        padding: "2px 0",
+      }}
+    >
+      <span
+        style={{
+          fontFamily: "'Inter', sans-serif",
+          fontSize: "0.68rem",
+          color: "rgba(255,255,255,0.5)",
+          textTransform: "uppercase",
+          letterSpacing: "0.12em",
+        }}
+      >
+        {label}
+      </span>
+      <span
+        style={{
+          fontFamily: "'Inter', sans-serif",
+          fontSize: "0.75rem",
+          color: "rgba(255,255,255,0.85)",
+          fontVariantNumeric: "tabular-nums",
         }}
       >
         {value}
@@ -412,7 +548,7 @@ function DoneScreen() {
         className="text-white/45 mt-1"
         style={{ fontFamily: "'Inter', sans-serif", fontSize: "0.75rem" }}
       >
-        Redirecting to your booking…
+        Redirecting…
       </p>
     </div>
   );

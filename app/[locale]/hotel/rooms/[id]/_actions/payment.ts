@@ -149,6 +149,7 @@ export async function createPaymentOrder(
   if (!created.ok) return { ok: false, reason: created.reason };
 
   const order: PaymentOrder = {
+    kind: "room",
     orderId: providerOrderId,
     bookingId: created.bookingId,
     amount: totalPaise,

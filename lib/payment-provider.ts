@@ -10,22 +10,31 @@
  * via the variant price, but the order surface keeps everything in paise so
  * downstream code (server actions, modal UI, future Razorpay SDK) is
  * uniform.
+ *
+ * `PaymentOrder` is a discriminated union over `kind`. Both the room-booking
+ * flow (`kind: "room"`) and the food-ordering flow (`kind: "food"`) plug into
+ * the same demo modal — the modal branches its summary section on `kind`.
+ * Adding a new flow means adding a new variant here and one render branch in
+ * the modal.
  */
 
 export type PaymentProviderId = "demo" | "razorpay";
 
-export type PaymentOrder = {
+/** Common fields shared by every PaymentOrder variant. */
+type PaymentOrderBase = {
   /** Provider-issued order id. Used as the key for confirm/fail/cancel. */
   orderId: string;
-  /** Our internal room_bookings.id. The success page is keyed by this. */
-  bookingId: string;
   amount: number;          // paise
   currency: "INR";
   /** Human-friendly reference shown in the modal + on the success page. */
   receipt: string;
   provider: PaymentProviderId;
-  /** Snapshot of what the user is paying for. Shown in the demo modal and
-   *  passed to Razorpay's checkout `notes` field when it lands. */
+};
+
+/** Room-booking payment. `bookingId` is our internal `room_bookings.id`. */
+export type RoomPaymentOrder = PaymentOrderBase & {
+  kind: "room";
+  bookingId: string;
   booking: {
     categoryId: string;
     variantId: string;
@@ -36,6 +45,27 @@ export type PaymentOrder = {
     guests: number;
   };
 };
+
+/** Food-ordering payment. `foodOrderId` is our internal `restaurant_orders.id`. */
+export type FoodPaymentOrder = PaymentOrderBase & {
+  kind: "food";
+  foodOrderId: string;
+  food: {
+    shortCode: string;
+    fulfillment: "in_room" | "takeaway" | "delivery";
+    items: Array<{
+      name: string;
+      variant: "single" | "half" | "full";
+      qty: number;
+      lineTotalPaise: number;
+    }>;
+    subtotalPaise: number;
+    deliveryFeePaise: number;
+    taxPaise: number;
+  };
+};
+
+export type PaymentOrder = RoomPaymentOrder | FoodPaymentOrder;
 
 export type PaymentSuccess = {
   status: "success";

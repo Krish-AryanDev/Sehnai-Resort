@@ -7,19 +7,16 @@ import {
   type Fulfillment,
 } from "@/lib/order-mutations";
 import { getRestaurantSettings } from "@/lib/menu-repo";
-import { getOrderWithLines } from "@/lib/order-repo";
 import { checkDeliveryRadius } from "@/lib/delivery-distance";
-import {
-  notifyAdmin,
-  formatOrderConfirmationMessage,
-} from "@/lib/whatsapp-notifier";
 import { computeServerSideTax } from "./_lib-internal";
+import { sendAdminOrderNotification } from "@/lib/order-notify";
 
 /**
- * Public server action that places a pay-on-delivery order. Online payment
- * (Phase 5) will reuse `createOrder` with `paymentMode: "online"` and a
- * minted provider order id — this action stays COD-only on purpose so the
- * paid path doesn't accidentally regress here.
+ * Public server action that places a pay-on-delivery order. The paid path
+ * lives in [online-payment.ts](./online-payment.ts) and reuses `createOrder`
+ * with `paymentMode: "online"` plus a minted provider order id. Keeping the
+ * two flows in separate files means the COD path can't accidentally regress
+ * when the online path evolves.
  *
  * Trust boundary: the client passes cart line ids + variants + qty, plus
  * the contextual checkout fields. The server re-fetches authoritative
@@ -164,7 +161,7 @@ export async function placeCodOrder(
   }
 
   // ---- Fire-and-log WhatsApp ping (must never roll back the order) ----
-  sendOrderNotification(result.orderId).catch((err) => {
+  sendAdminOrderNotification(result.orderId).catch((err) => {
     // eslint-disable-next-line no-console
     console.warn(
       "[whatsapp] order notification threw:",
@@ -180,55 +177,4 @@ export async function placeCodOrder(
     orderId: result.orderId,
     shortCode: result.shortCode,
   };
-}
-
-async function sendOrderNotification(orderId: string): Promise<void> {
-  try {
-    const order = await getOrderWithLines(orderId);
-    if (!order) {
-      // eslint-disable-next-line no-console
-      console.warn("[whatsapp] order not found for notification:", orderId);
-      return;
-    }
-
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, "") ?? "";
-    const adminUrl = baseUrl ? `${baseUrl}/admin/orders/${order.id}` : null;
-
-    const message = formatOrderConfirmationMessage({
-      shortCode: order.shortCode,
-      fulfillment: order.fulfillment,
-      paymentMode: order.paymentMode,
-      paymentStatus: order.paymentStatus,
-      items: order.lines.map((l) => ({
-        name: l.nameSnapshot,
-        variant: l.variant,
-        qty: l.qty,
-      })),
-      subtotalPaise: order.subtotalPaise,
-      deliveryFeePaise: order.deliveryFeePaise,
-      taxPaise: order.taxPaise,
-      totalPaise: order.totalPaise,
-      customerName: order.customerName,
-      customerPhone: order.customerPhone,
-      roomNumber: order.roomNumber,
-      addressLine: order.addressLine,
-      addressLandmark: order.addressLandmark,
-      addressPincode: order.addressPincode,
-      pickupTime: order.pickupTime,
-      notes: order.notes,
-      adminUrl,
-    });
-
-    const result = await notifyAdmin(message);
-    if (!result.ok) {
-      // eslint-disable-next-line no-console
-      console.warn("[whatsapp] notify failed:", result.error);
-    }
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.warn(
-      "[whatsapp] order notification threw:",
-      err instanceof Error ? err.message : String(err)
-    );
-  }
 }

@@ -34,22 +34,18 @@ type Provider = "log" | "callmebot" | "cloudapi" | "twilio";
 
 export type NotifyResult = { ok: true } | { ok: false; error: string };
 
-export async function notifyAdmin(message: string): Promise<NotifyResult> {
+/** Low-level dispatcher used by every notify*. Picks a provider from
+ *  env and forwards `(to, message)`. NEVER throws. */
+async function notify(to: string, message: string): Promise<NotifyResult> {
   const provider = (process.env.WHATSAPP_PROVIDER ?? "log") as Provider;
-  const adminNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
-
-  if (!adminNumber) {
-    return { ok: false, error: "NEXT_PUBLIC_WHATSAPP_NUMBER not set." };
-  }
-
   try {
     switch (provider) {
       case "log":
-        return logProvider(adminNumber, message);
+        return logProvider(to, message);
       case "callmebot":
-        return await callMeBotProvider(adminNumber, message);
+        return await callMeBotProvider(to, message);
       case "cloudapi":
-        return await cloudApiProvider(adminNumber, message);
+        return await cloudApiProvider(to, message);
       case "twilio":
         return {
           ok: false,
@@ -65,6 +61,30 @@ export async function notifyAdmin(message: string): Promise<NotifyResult> {
       error: err instanceof Error ? err.message : String(err),
     };
   }
+}
+
+/** Ping the admin's WhatsApp number from `NEXT_PUBLIC_WHATSAPP_NUMBER`. */
+export async function notifyAdmin(message: string): Promise<NotifyResult> {
+  const adminNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+  if (!adminNumber) {
+    return { ok: false, error: "NEXT_PUBLIC_WHATSAPP_NUMBER not set." };
+  }
+  return notify(adminNumber, message);
+}
+
+/** Ping an arbitrary customer phone. Phone should be digits with country
+ *  code; callers are expected to normalise. Returns `{ ok: false }` for
+ *  blank phones rather than throwing — the customer ping is fire-and-log
+ *  and a missing phone is just a no-op for our purposes. */
+export async function notifyCustomer(
+  phone: string | null | undefined,
+  message: string
+): Promise<NotifyResult> {
+  const digits = (phone ?? "").replace(/[^\d]/g, "");
+  if (digits.length < 10) {
+    return { ok: false, error: "Customer phone is missing or too short." };
+  }
+  return notify(digits, message);
 }
 
 /* ------------------------------------------------------------------ */
@@ -153,8 +173,7 @@ async function cloudApiProvider(
 /* ------------------------------------------------------------------ */
 
 /** Pretty-print a food-order confirmation for the admin's WhatsApp. Fires
- *  on order placement. Phase 4 only sends to admin; customer pings on
- *  status changes land in Phase 6 alongside realtime tracking. */
+ *  on order placement (COD) or payment confirmation (online). */
 export function formatOrderConfirmationMessage(args: {
   shortCode: string;
   fulfillment: "in_room" | "takeaway" | "delivery";
@@ -229,6 +248,74 @@ export function formatOrderConfirmationMessage(args: {
     lines.push("");
     lines.push(args.adminUrl);
   }
+  return lines.join("\n");
+}
+
+/** Pretty-print a customer-facing status update sent on each kitchen
+ *  advancement. Wording branches on fulfillment so an in-room diner
+ *  doesn't get "out for delivery" pings. */
+export function formatOrderStatusMessage(args: {
+  shortCode: string;
+  status:
+    | "accepted"
+    | "preparing"
+    | "ready"
+    | "out_for_delivery"
+    | "delivered"
+    | "cancelled";
+  fulfillment: "in_room" | "takeaway" | "delivery";
+  customerName: string;
+  cancelledReason?: string | null;
+  trackingUrl?: string | null;
+}): string | null {
+  // out_for_delivery is only meaningful for delivery orders. The kitchen
+  // state machine forces every order through it, but in-room/takeaway
+  // customers shouldn't see it on WhatsApp — return null and the caller
+  // skips the send.
+  if (
+    args.status === "out_for_delivery" &&
+    args.fulfillment !== "delivery"
+  ) {
+    return null;
+  }
+
+  const greet = `Hi ${args.customerName.split(" ")[0] || "there"},`;
+  const body = (() => {
+    switch (args.status) {
+      case "accepted":
+        return `your order ${args.shortCode} has been accepted by our kitchen.`;
+      case "preparing":
+        return `your order ${args.shortCode} is being prepared now.`;
+      case "ready":
+        if (args.fulfillment === "delivery") {
+          return `your order ${args.shortCode} is ready and heading out for delivery shortly.`;
+        }
+        if (args.fulfillment === "takeaway") {
+          return `your order ${args.shortCode} is ready for pickup at reception.`;
+        }
+        return `your order ${args.shortCode} is ready — we'll bring it to your room shortly.`;
+      case "out_for_delivery":
+        return `your order ${args.shortCode} is on its way. Our staff will reach you shortly.`;
+      case "delivered":
+        if (args.fulfillment === "delivery") {
+          return `your order ${args.shortCode} has been delivered. Hope you enjoy it!`;
+        }
+        if (args.fulfillment === "takeaway") {
+          return `your order ${args.shortCode} has been collected. Hope you enjoy it!`;
+        }
+        return `your order ${args.shortCode} has been delivered to your room. Hope you enjoy it!`;
+      case "cancelled":
+        return `your order ${args.shortCode} has been cancelled${
+          args.cancelledReason ? ` — ${args.cancelledReason}` : ""
+        }. Please reach out to reception if this is unexpected.`;
+    }
+  })();
+
+  const lines = [greet, "", body];
+  if (args.trackingUrl) {
+    lines.push("", `Track: ${args.trackingUrl}`);
+  }
+  lines.push("", "— Shehnai Resort");
   return lines.join("\n");
 }
 
