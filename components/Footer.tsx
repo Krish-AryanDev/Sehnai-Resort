@@ -222,6 +222,8 @@ export function Footer() {
             fontSize: "0.7rem",
             letterSpacing: "0.06em",
           }}
+
+         
         >
           Developed by{" "}
           <a
