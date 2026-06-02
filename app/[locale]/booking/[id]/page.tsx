@@ -4,6 +4,7 @@ import { getSupabaseAdminClient } from "@/lib/supabase-admin";
 import { individualRooms, roomCategories } from "@/lib/rooms-data";
 import { Link } from "@/i18n/navigation";
 import { siteLinks } from "@/lib/site-config";
+import { CopyButton } from "./_components/CopyButton";
 
 export const dynamic = "force-dynamic";
 
@@ -169,7 +170,7 @@ function ConfirmedBlock({
           border: "1px solid rgba(201,168,76,0.2)",
         }}
       >
-        <DetailRow label="Booking ID" value={data.id} mono />
+        <DetailRow label="Booking ID" value={data.id} mono copyable />
         <DetailRow
           label="Room"
           value={
@@ -365,13 +366,15 @@ function DetailRow({
   label,
   value,
   mono = false,
+  copyable = false,
 }: {
   label: string;
   value: string;
   mono?: boolean;
+  copyable?: boolean;
 }) {
   return (
-    <div className="flex items-baseline justify-between" style={{ marginBottom: 8 }}>
+    <div className="flex items-baseline justify-between gap-3" style={{ marginBottom: 8 }}>
       <span
         className="text-white/40"
         style={{
@@ -380,20 +383,25 @@ function DetailRow({
           letterSpacing: "0.14em",
           textTransform: "uppercase",
           fontWeight: 600,
+          flexShrink: 0,
         }}
       >
         {label}
       </span>
-      <span
-        className="text-white/85 text-right"
-        style={{
-          fontFamily: mono
-            ? "ui-monospace, monospace"
-            : "'Inter', sans-serif",
-          fontSize: mono ? "0.75rem" : "0.82rem",
-        }}
-      >
-        {value}
+      <span className="flex items-center justify-end text-right" style={{ minWidth: 0 }}>
+        <span
+          className="text-white/85"
+          style={{
+            fontFamily: mono
+              ? "ui-monospace, monospace"
+              : "'Inter', sans-serif",
+            fontSize: mono ? "0.75rem" : "0.82rem",
+            overflowWrap: "anywhere",
+          }}
+        >
+          {value}
+        </span>
+        {copyable && <CopyButton value={value} />}
       </span>
     </div>
   );

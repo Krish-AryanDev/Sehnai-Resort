@@ -1,0 +1,21 @@
+/* /admin/restaurant-settings — single-row config editor. Extends admin.css. */
+
+.admin-hint {
+  font-size: 12px;
+  color: #a8a29e;
+  margin: 0.3rem 0 0;
+  line-height: 1.5;
+}
+
+/* Section headings inside the settings card get a divider + breathing room,
+   except the first one which sits flush under the card's top padding. */
+.settings-card .admin-h2 {
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #f5f5f4;
+}
+.settings-card .admin-h2:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}

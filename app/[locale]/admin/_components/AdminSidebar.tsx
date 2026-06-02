@@ -9,6 +9,7 @@ import {
   UtensilsCrossed,
   ConciergeBell,
   ChartLine,
+  SlidersHorizontal,
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { AdminSignOutButton } from "./AdminSignOutButton";
@@ -74,6 +75,12 @@ const NAV_GROUPS: NavGroup[] = [
         href: "/admin/menu",
         label: "Menu",
         icon: <UtensilsCrossed size={16} />,
+        match: "prefix",
+      },
+      {
+        href: "/admin/restaurant-settings",
+        label: "Settings",
+        icon: <SlidersHorizontal size={16} />,
         match: "prefix",
       },
     ],
