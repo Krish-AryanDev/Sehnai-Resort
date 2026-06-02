@@ -1,6 +1,6 @@
 "use client";
 
-import { Sparkles, Music, Camera, ChefHat, Car, Clock, ArrowRight, Phone } from "lucide-react";
+import { Sparkles, Music, Camera, ChefHat, Car, Clock, Phone } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { FadeIn } from "@/components/FadeIn";
 import { PageHero } from "@/components/PageHero";
@@ -22,7 +22,6 @@ const packages = [
     name: "Silver",
     tagline: "Classic Elegance",
     capacity: "Up to 200 guests",
-    price: "Starting from ₹50,000",
     items: ["Main Hall Rental (8 hours)", "Basic Floral Décor", "Standard Catering Menu", "Sound System", "Welcome Drink Station"],
     highlight: false,
   },
@@ -30,15 +29,20 @@ const packages = [
     name: "Gold",
     tagline: "The Signature Experience",
     capacity: "Up to 400 guests",
-    price: "Starting from ₹1,00,000",
     items: ["Grand Ballroom (12 hours)", "Premium Floral Arrangements", "Multi-Cuisine Banquet", "Stage & Lighting Setup", "Dedicated Coordinator", "Complimentary Cake"],
     highlight: true,
+  },
+  {
+    name: "Platinum",
+    tagline: "Refined Grandeur",
+    capacity: "Up to 500 guests",
+    items: ["Premium Ballroom (12 hours)", "Designer Floral Décor", "Gourmet Multi-Cuisine Banquet", "Advanced Stage & Lighting", "Dedicated Event Manager", "Welcome Ceremony Setup", "Photography Booth"],
+    highlight: false,
   },
   {
     name: "Royal",
     tagline: "The Ultimate Celebration",
     capacity: "Up to 600 guests",
-    price: "Starting from ₹2,00,000",
     items: ["Full Venue Exclusivity", "Luxury Décor Package", "Fine Dining Banquet", "Live Band Stage", "Bridal Suite Access", "Valet Parking", "Photography Booth"],
     highlight: false,
   },
@@ -145,7 +149,7 @@ export default function MarriageHallPage() {
       </section>
 
       <section className="py-20 md:py-28" style={{ backgroundColor: "#07070d" }}>
-        <div className="max-w-6xl mx-auto px-6 md:px-10">
+        <div className="max-w-7xl mx-auto px-6 md:px-10">
           <FadeIn>
             <div className="text-center mb-14">
               <div className="flex items-center justify-center gap-3 mb-4">
@@ -161,7 +165,7 @@ export default function MarriageHallPage() {
             </div>
           </FadeIn>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {packages.map((pkg, i) => (
               <FadeIn key={pkg.name} delay={i * 0.1}>
                 <div className="relative flex flex-col p-8" style={{ backgroundColor: pkg.highlight ? "rgba(201,168,76,0.06)" : "#0d0d16", border: pkg.highlight ? "1px solid rgba(201,168,76,0.4)" : "1px solid rgba(255,255,255,0.06)" }}>
@@ -179,8 +183,7 @@ export default function MarriageHallPage() {
 
                   <div className="w-8 h-px bg-[#C9A84C]/40 mb-6" />
 
-                  <p className="text-white/35 font-inter mb-1" style={{ fontFamily: "'Inter', sans-serif", fontSize: "0.72rem", letterSpacing: "0.1em" }}>{pkg.capacity}</p>
-                  <p className="text-[#C9A84C] font-playfair mb-6" style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", fontWeight: 400 }}>{pkg.price}</p>
+                  <p className="text-white/35 font-inter mb-6" style={{ fontFamily: "'Inter', sans-serif", fontSize: "0.72rem", letterSpacing: "0.1em" }}>{pkg.capacity}</p>
 
                   <ul className="flex flex-col gap-2.5 mb-8 flex-1">
                     {pkg.items.map((item) => (
@@ -191,13 +194,14 @@ export default function MarriageHallPage() {
                     ))}
                   </ul>
 
-                  <button
+                  <a
+                    href={siteLinks.tel}
                     className={`${pkg.highlight ? "btn-premium" : "btn-premium-outline"} w-full py-3 font-inter flex items-center justify-center gap-2 group`}
                     style={{ fontFamily: "'Inter', sans-serif", fontSize: "0.68rem", letterSpacing: "0.22em", fontWeight: 600, textTransform: "uppercase", backgroundColor: pkg.highlight ? "#C9A84C" : "transparent", color: pkg.highlight ? "#000" : "#C9A84C", border: pkg.highlight ? "none" : "1px solid rgba(201,168,76,0.4)" }}
                   >
-                    Book This Package
-                    <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform duration-300" />
-                  </button>
+                    <Phone size={12} className="group-hover:scale-110 transition-transform duration-300" />
+                    Call to Book
+                  </a>
                 </div>
               </FadeIn>
             ))}
