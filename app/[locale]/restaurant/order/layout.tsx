@@ -1,4 +1,5 @@
 import { CartProvider } from "@/lib/cart-store";
+import { redirect } from "@/i18n/navigation";
 
 /**
  * Wraps every page under /restaurant/order in the cart provider so the
@@ -12,5 +13,6 @@ export default function OrderRouteLayout({
 }: {
   children: React.ReactNode;
 }) {
+  redirect({ href: "/restaurant", locale: "en" });
   return <CartProvider>{children}</CartProvider>;
 }

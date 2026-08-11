@@ -57,14 +57,13 @@ export default function RestaurantPage() {
                   Whether you&apos;re joining us for a leisurely lunch, a romantic dinner, or a private celebration, our team is dedicated to ensuring every visit exceeds your expectations.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 w-fit">
-                  <Link
-                    href="/restaurant/order"
-                    className="btn-premium flex items-center gap-3 bg-[#C9A84C] text-black hover:bg-[#dfc068] font-inter"
+                  <div
+                    className="flex items-center gap-3 bg-[#C9A84C]/50 text-black font-inter cursor-not-allowed"
                     style={{ fontFamily: "'Inter', sans-serif", fontSize: "0.72rem", letterSpacing: "0.22em", fontWeight: 600, textTransform: "uppercase", padding: "0.9rem 2rem" }}
                   >
                     <ShoppingBag size={13} />
-                    Order Online
-                  </Link>
+                    Coming Soon
+                  </div>
                   <a
                     href={siteLinks.tel}
                     className="btn-premium-outline flex items-center gap-3 font-inter"

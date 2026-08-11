@@ -7,6 +7,7 @@ import { PageHero } from "@/components/PageHero";
 import { ContactCTA } from "@/components/ContactCTA";
 import { SmartImage } from "@/components/SmartImage";
 import { Link } from "@/i18n/navigation";
+import { siteLinks } from "@/lib/site-config";
 import {
   roomCategories,
   getStartingPrice,
@@ -121,14 +122,14 @@ export default function HotelPage() {
                       ))}
                     </ul>
 
-                    <Link
-                      href={`/hotel/rooms/${room.id}`}
+                    <a
+                      href={siteLinks.tel}
                       className={`${room.highlight ? "btn-premium" : "btn-premium-outline"} w-full py-3 font-inter flex items-center justify-center gap-2 group`}
                       style={{ fontFamily: "'Inter', sans-serif", fontSize: "0.68rem", letterSpacing: "0.2em", fontWeight: 600, textTransform: "uppercase", backgroundColor: room.highlight ? "#C9A84C" : "transparent", color: room.highlight ? "#000" : "#C9A84C", border: room.highlight ? "none" : "1px solid rgba(201,168,76,0.35)" }}
                     >
-                      Book This Room
+                      Call to Book
                       <ArrowRight size={11} className="group-hover:translate-x-1 transition-transform duration-300" />
-                    </Link>
+                    </a>
                   </div>
                 </div>
               </FadeIn>
